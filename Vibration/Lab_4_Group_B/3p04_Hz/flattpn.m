@@ -1,0 +1,13 @@
+function wowmean = flattpn(n)
+    % returns the N-point normalized Flattop window in an array
+    nm1 = n - 1;
+    nr1 = 1:nm1;
+    % w =  (0.21170*ones(nm1)       - 0.40565*cos(2.0*pi*nr1/n) ...
+    %      + 0.27808*cos(4*pi*nr1/n) - 0.09435*cos(6*pi*nr1/n) ...
+    %      + 0.01022*cos(8*pi*nr1/n));
+    w =  (0.21170*ones(1,nm1)       - 0.40565*cos(2.0*pi*nr1/n) ...
+         + 0.27808*cos(4*pi*nr1/n) - 0.09435*cos(6*pi*nr1/n) ...
+         + 0.01022*cos(8*pi*nr1/n));
+    w = [[0.0], w];
+    wowmean = w/mean(w);
+end
