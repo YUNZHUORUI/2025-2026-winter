@@ -45,6 +45,8 @@ plt.ylabel('Voltage (V)')
 plt.grid(True, linestyle='--', alpha=0.7)
 plt.legend()
 plt.axhline(0, color='black', linewidth=0.5)
+plt.savefig('V_L_voltage.png', dpi=300)
+
 
 # 显示
 plt.show()
