@@ -42,7 +42,7 @@ function ans1 = plotspec(npoints,delt,chref,ch2)
     ylabel('Angle in degrees')
     grid on
     hold on
-    xline(f_peak1, '--r', 'LineWidth', 1, 'Label', 'Peak 1');
-    xline(f_peak2, '--r', 'LineWidth', 1, 'Label', 'Peak 2'); 
+    %xline(f_peak1, '--r', 'LineWidth', 1, 'Label', 'Peak 1');
+    %xline(f_peak2, '--r', 'LineWidth', 1, 'Label', 'Peak 2'); 
 
     ans1 = true;
