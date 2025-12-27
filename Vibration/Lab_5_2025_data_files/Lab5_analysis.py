@@ -16,7 +16,7 @@ F_amp = F_amp_df.values.flatten()
 
 
 num_dof = 5
-I = np.eye(num_dof)           # idential matrix
+I = np.eye(num_dof)           # identical matrix
 Z = np.zeros((num_dof, num_dof)) # zero matrix
 Minv = np.linalg.inv(M)
 # A = [[0     , I      ],
@@ -40,11 +40,11 @@ def get_force_vector(t):
 
 
 def model_derivative(t, z):
-    # 获取当前的力向量 F(t)
+    # F(t)
     Ft = get_force_vector(t)
 
-    # 构造输入项 B*F(t)
-    # 这一项对应加速度部分的贡献: M^-1 * F(t)
+    # input B*F(t)
+    # : M^-1 * F(t)
     input_term = np.concatenate([np.zeros(num_dof), Minv @ Ft])
 
     # 计算 dz/dt = A * z + Input
@@ -54,11 +54,10 @@ def model_derivative(t, z):
 
 t_start = 0.0
 t_end = 5.0
-dt = 0.001  # 时间步长，越小越精确
+dt = 0.001
 time_steps = np.arange(t_start, t_end, dt)
 
 # 初始化状态存储数组
-# 行数 = 时间步数, 列数 = 10 (5个位移 + 5个速度)
 results = np.zeros((len(time_steps), 2 * num_dof))
 
 # 初始条件: 位移和速度都为0
@@ -76,13 +75,12 @@ for i, t in enumerate(time_steps):
     k3 = model_derivative(t + 0.5 * dt, z_current + 0.5 * dt * k2)
     k4 = model_derivative(t + dt, z_current + dt * k3)
 
-    # 更新下一个状态
     z_current = z_current + (dt / 6.0) * (k1 + 2 * k2 + 2 * k3 + k4)
 
 print("计算完成。")
 
 # ----------------------
-# 5. 绘图 (只画前5个列，即位移)
+# Plot
 # ----------------------
 plt.figure(figsize=(10, 6))
 
