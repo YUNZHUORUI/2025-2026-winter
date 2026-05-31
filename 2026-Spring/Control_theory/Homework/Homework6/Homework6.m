@@ -25,7 +25,7 @@ ol_poles = eig(A);
 fprintf('Open-loop poles:\n'); disp(ol_poles);
 
 % Regulator poles (well into LHP, good damping)
-reg_poles = [-5+3i; -5-3i; -7+2i; -7-2i];
+reg_poles = [-4+4i, -4-4i, -10, -12];
 K = place(A, B, reg_poles);
 fprintf('State feedback gain K:\n'); disp(K);
 fprintf('Closed-loop (regulator) poles:\n'); disp(eig(A - B*K));
@@ -59,7 +59,10 @@ xx = AA \ bb;
 Nx = xx(1:4);
 Nu = xx(5);
 N_bar = Nu+ K * Nx;
-display(N_bar)
+display(Nx);
+display(Nu);
+display(Nbar);
+
 
 %% --(c) Internal Model Control for robust tracking --
 A_ext = [0,  C ;      
@@ -69,7 +72,7 @@ C_ext = [0, C];
 fprintf('Extended system controllability rank: %d (should be %d)\n', rank(ctrb(A_ext, B_ext)), n+1);
  
 % Regulator poles for extended system (5 poles needed)
-reg_poles_ext = [-5+3i, -5-3i, -7+2i, -7-2i, -5];
+reg_poles_ext = [-5+5i, -5-5i, -10, -15, -20];
 K_ext = place(A_ext, B_ext, reg_poles_ext);
  
 K1 = K_ext(1);        % 积分器增益 (标量)
