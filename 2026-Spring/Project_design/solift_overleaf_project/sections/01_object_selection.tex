@@ -1,0 +1,97 @@
+%===============================================================
+% CHAPTER 1 - Object Selection (with Justification)
+%===============================================================
+\chapter{Object Selection}
+\label{sec:object-selection}
+
+\section{Selected object and project context}
+\label{subsec:selected-object}
+
+The object selected for this Design for Manufacturing project is Solift, a solar-powered tilt-rotor unmanned aerial vehicle intended for small-package logistics and low-altitude delivery missions. The system combines several functions that are usually treated separately in simpler student projects. It must take off and land vertically, carry a payload without disturbing the aircraft balance, transition into a more efficient wing-borne cruise mode, harvest part of its operating energy from solar cells, and remain practical enough to be manufactured, assembled, inspected, repaired, and transported by a small engineering team. For this reason, Solift is not treated in this report as only an aircraft concept. It is treated as a manufacturing object whose value depends on whether its subsystems can be built with controlled geometry, reasonable cost, and repeatable assembly quality.
+
+The basic configuration can be understood as a small logistics aircraft built around five major physical subsystems. The first subsystem is the solar energy surface, which uses high-efficiency monocrystalline silicon cells to provide auxiliary power and to reduce the dependence on battery energy during daytime operation. The second subsystem is the lifting wing, which uses a stacked triplane arrangement and an MH114 airfoil to provide large lifting area within a compact span. The third subsystem is the payload holding structure, referred to in this report as the claw or fixture, which constrains the payload and transfers the payload load into the fuselage or central frame. The fourth subsystem is the foldable propeller, which reduces storage volume and lowers the risk of blade damage during handling. The fifth subsystem is the tilt-rotor mechanism, which allows the propulsion unit to rotate between a vertical thrust orientation and a forward thrust orientation. These subsystems are connected mechanically and functionally. A design change in one of them often affects the others. For example, increasing the solar panel area changes the wing surface treatment and wiring layout; moving the payload fixture changes the center of gravity; adding clearance to a foldable propeller hinge may reduce folding friction but increase vibration; and changing the tilt-rotor joint stiffness can affect transition stability.
+
+The available project material supports this object choice with actual design evidence rather than only a conceptual description. The solar panel test report provides measured I-V and P-V data for one photovoltaic cell and an 18-cell series string. The wing design material defines the adopted wing configuration, geometric dimensions, selected airfoil, and structural concept. The CAD images show the overall aircraft arrangement, the fuselage and payload bay region, the fixture geometry, the foldable propeller assembly, and the tilt-related propulsion layout. These sources make Solift suitable for a final report because the discussion can be tied to specific dimensions, measured electrical values, and visible design features.
+
+At the same time, Solift remains a preliminary engineering design. It is not yet a certified aircraft or a fully flight-tested product. That limitation is useful for this course because it makes the design decisions visible. The report can discuss why a solar cell must be bonded carefully to a curved or semi-curved wing surface, why a foam shell must preserve the intended airfoil contour, why a fixture needs access for screws and assembly tools, why a foldable propeller requires controlled joint clearance, and why a tilt-rotor mechanism is more demanding than a fixed motor mount. In a mature commercial product, many of these choices would be hidden inside final drawings and vendor specifications. In this project, they remain open enough to analyze.
+
+\section{Reason for selecting Solift}
+\label{subsec:selection-reason}
+
+Solift was selected because it creates a strong connection between product function and manufacturing decisions. A conventional report object can sometimes be described by its final shape alone. Solift cannot. Its performance depends on how accurately the wing shape is manufactured, how cleanly the solar cells are integrated, how stiff the rotating motor support is, how reliably the propeller folds and deploys, and how consistently the payload fixture holds its position. These issues are not separate from the design; they are the design. A solar-powered aircraft with poor surface finish may lose the aerodynamic benefit that was expected from the airfoil. A tilt-rotor aircraft with excessive joint play may look correct in CAD but behave poorly during transition. A payload fixture that is strong but heavy may solve one local problem while reducing flight endurance. The project therefore gives enough room for the type of discussion expected in a Design for Manufacturing final report.
+
+The object also fits the practical limits of a student project. The design uses commercially available solar cells, familiar lightweight wing materials, CAD-modeled fixtures, and propulsion parts that can be selected from existing UAV hardware. The project does not require the team to invent a new battery chemistry, manufacture a custom motor, or build a full aerospace certification test program. Instead, the engineering work is concentrated in the integration of available technologies. That makes the project feasible, but not trivial. A student team can test a solar cell under controlled illumination, build a foam and balsa wing section, print or machine a fixture, examine a foldable propeller mechanism, and evaluate the clearances in a tilt assembly. These are realistic tasks for the course timeline, and they generate evidence that can be included in the report.
+
+The project also has a clear application. Last-mile logistics is a demanding use case because the vehicle must operate near people, buildings, and limited landing spaces. A pure fixed-wing aircraft may be efficient in cruise but needs a runway or launch system. A pure multirotor can take off vertically but consumes power continuously to stay airborne. Solift attempts to sit between these two solutions. It uses rotors for takeoff and landing, then uses wing lift to reduce cruise power. The solar cells do not remove the need for a battery, and the report should not claim that they do. Their more realistic role is to supplement the energy system, especially during cruise and ground exposure under daylight. This distinction matters because it keeps the design argument honest. The solar cells are valuable because they reduce net energy draw and demonstrate renewable integration, not because they make the aircraft independent of all other power sources.
+
+From a manufacturing point of view, the most interesting feature of Solift is that the project forces trade-offs at several scales. At the material scale, the team must choose how to combine fragile photovoltaic cells, foam, wood, film, composite textures, adhesives, and metallic or printed hardware. At the part scale, each component must balance stiffness, mass, and manufacturability. At the assembly scale, the subsystems must fit together without blocking wiring, motor motion, payload access, or inspection. At the operational scale, the aircraft must survive repeated handling, folding, deployment, takeoff, transition, and landing. This layered complexity is the main reason Solift was chosen over simpler alternatives.
+
+\section{Selection criteria}
+\label{subsec:selection-criteria}
+
+The selection process used criteria that match both the course requirement and the actual state of the project. The object had to be complex enough for DFM analysis, but it also had to be supported by data and design material that the team could explain in detail. Table~\ref{tab:selection-criteria} summarizes the criteria used during selection.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Criteria used for selecting the report object}
+    \label{tab:selection-criteria}
+    \begin{tabular}{p{0.23\textwidth} p{0.67\textwidth}}
+        \toprule
+        Criterion & Meaning for this project \\
+        \midrule
+        Manufacturing complexity &
+        The object should contain several parts, materials, joints, and assembly steps so that DFM issues can be discussed with real technical depth. \\
+        Data availability &
+        The team should have measured data, CAD images, dimensions, or design records that can support the report instead of relying only on assumptions. \\
+        Feasibility &
+        The object should be possible to prototype or partially test within a student project schedule using accessible materials and equipment. \\
+        Functional relevance &
+        The design should address a realistic engineering need, such as compact logistics delivery, energy efficiency, or deployable aerial operation. \\
+        Innovation potential &
+        The object should combine known technologies in a way that creates design problems worth studying, rather than simply copying a standard product. \\
+        DFM learning value &
+        The object should reveal trade-offs between performance, cost, manufacturing accuracy, assembly convenience, and maintenance. \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Solift performs well against these criteria because the project contains both analytical content and physical design content. The solar tests provide electrical measurements. The wing section provides aerodynamic and structural decisions. The CAD images provide visible geometry for the fuselage, fixture, propulsion arrangement, and propeller. The design is also feasible at the subsystem level. Even if a full flight prototype is outside the scope of the final report, the team can still test solar cells, inspect the wing manufacturing route, evaluate the folding propeller design, and discuss the tilt mechanism with enough detail to make the report technically meaningful.
+
+\section{Rejected alternatives}
+\label{subsec:rejected-alternatives}
+
+Several alternatives were considered before Solift was selected. The first alternative was a conventional quadrotor delivery drone. This object has the advantage of a simple configuration and a well-known control method. Four fixed rotors are easy to explain, and the frame can be manufactured with standard tubes, plates, and brackets. However, this simplicity is also a weakness for the purpose of the final report. A quadrotor provides fewer opportunities to discuss aerodynamic surface manufacturing, transition mechanisms, solar integration, and compact storage features. It is still a useful aircraft, but it would make the report more focused on component selection than on design for manufacturing.
+
+The second alternative was a pure fixed-wing solar UAV. This option has a strong connection to solar energy because a large wing can provide enough area for photovoltaic cells. It also has better cruise efficiency than a multirotor. The problem is that a pure fixed-wing aircraft does not fit the intended logistics scenario as well. It usually needs a runway, hand launch, catapult, or recovery system. Those requirements reduce its usefulness in dense urban or campus delivery environments. From a DFM perspective, the fixed-wing aircraft would still allow discussion of airfoil shape, wing structure, and solar cell bonding, but it would not include the same mechanical complexity from tilt joints, foldable propulsion, and payload handling.
+
+The third alternative was a simpler mechanical fixture or claw as a standalone manufacturing project. This option would be easier to prototype and measure. It would allow detailed discussion of screw holes, tolerances, material removal, and assembly access. However, it would not have enough system-level interaction. The fixture is interesting inside Solift because it must work with the payload mass, aircraft center of gravity, fuselage space, and structural load path. If it were removed from the aircraft and treated as an independent object, most of that engineering context would disappear.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Comparison of Solift with rejected alternatives}
+    \label{tab:alternative-comparison}
+    \begin{tabular}{p{0.22\textwidth} p{0.20\textwidth} p{0.22\textwidth} p{0.25\textwidth}}
+        \toprule
+        Candidate object & Main advantage & Main limitation & Reason for rejection or selection \\
+        \midrule
+        Conventional quadrotor &
+        Simple structure and mature control approach &
+        Limited cruise efficiency and less DFM variety &
+        Rejected because the design would focus mainly on frame layout and component selection. \\
+        Fixed-wing solar UAV &
+        Good cruise efficiency and large solar area &
+        Requires launch and recovery space, with no VTOL capability &
+        Rejected because it does not match the compact logistics mission as well as a tilt-rotor aircraft. \\
+        Standalone claw or fixture &
+        Easy to manufacture and inspect &
+        Too narrow as a system-level project &
+        Rejected because it lacks the aircraft-level interactions needed for a full DFM report. \\
+        Solift solar tilt-rotor UAV &
+        Combines solar energy, wing lift, payload holding, folding propulsion, and tilt transition &
+        More difficult to integrate and validate &
+        Selected because it provides enough complexity, available data, and manufacturing depth for the report. \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+The final choice was therefore not based on choosing the easiest object. It was based on choosing the object with the best balance between ambition and evidence. Solift is complex enough to support a detailed DFM discussion, but the team already has material that makes the discussion concrete. The solar test results, wing geometry, CAD images, fixture design, foldable propeller model, and tilt-rotor concept allow the report to move beyond a general idea and into actual design decisions.

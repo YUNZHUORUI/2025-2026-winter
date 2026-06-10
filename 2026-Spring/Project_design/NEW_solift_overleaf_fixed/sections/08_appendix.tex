@@ -1,0 +1,181 @@
+%===============================================================
+% CHAPTER 7 – Supplementary Material / Appendix
+%===============================================================
+\chapter{Supplementary Material and Appendix}
+
+%---------------------------------------------------------------
+\section*{Appendix A: Propeller Thrust Calculation -- Detailed Derivation}
+\addcontentsline{toc}{section}{Appendix A: Propeller Thrust Calculation}
+%---------------------------------------------------------------
+
+The hover thrust required per front motor is derived from momentum theory. At MTOW:
+
+\begin{equation}
+    T_{required} = \frac{m_{MTOW} \cdot g}{N_{motors}} = \frac{12.0 \times 9.81}{2} = \SI{58.9}{N} = \SI{6.0}{kgf}
+\end{equation}
+
+\noindent with a design margin of 50\% (thrust-to-weight = 1.8:1 total), each motor must produce:
+\begin{equation}
+    T_{motor} = \frac{12.0 \times 9.81 \times 1.8}{2} = \SI{105.9}{N} \approx \SI{10.8}{kgf}
+\end{equation}
+
+\noindent From actuator disk theory, the induced velocity in hover is:
+\begin{equation}
+    v_i = \sqrt{\frac{T}{2 \rho A_{disk}}}
+\end{equation}
+where $A_{disk} = \pi \left(\frac{D_{prop}}{2}\right)^2 = \pi \times (0.279)^2 = \SI{0.245}{m^2}$ for the 22-inch (0.559~m diameter) propeller, and $\rho = \SI{1.225}{kg/m^3}$ at sea level:
+\begin{equation}
+    v_i = \sqrt{\frac{58.9}{2 \times 1.225 \times 0.245}} = \sqrt{98.2} = \SI{9.91}{m/s}
+\end{equation}
+
+\noindent Power required per motor in hover:
+\begin{equation}
+    P_{hover} = \frac{T \cdot v_i}{\eta_{motor}} = \frac{58.9 \times 9.91}{0.85} = \SI{686}{W}
+\end{equation}
+
+\noindent The Sunnysky X4112S is rated at $\sim$700~W continuous at 12S, confirming the motor selection is appropriate with minimal margin for thermal management requirements.
+
+%---------------------------------------------------------------
+\section*{Appendix B: Solar Energy Budget Calculation}
+\addcontentsline{toc}{section}{Appendix B: Solar Energy Budget}
+%---------------------------------------------------------------
+
+\noindent The solar energy contribution to cruise range is calculated as follows.
+
+\noindent Available solar power in cruise:
+\begin{equation}
+    P_{solar} = G \cdot A_{PV} \cdot \eta_{PV} = 1000 \times 0.95 \times 0.245 = \SI{232.8}{W}
+\end{equation}
+
+\noindent Cruise power required (total, at 18~m/s, 5~kg payload):
+\begin{equation}
+\begin{aligned}
+    P_{cruise} &= \frac{D \cdot V}{1000} = \frac{(m \cdot g / (L/D)) \cdot V}{1000} \\
+               &= \frac{(12.0 \times 9.81 / 45.6) \times 18}{1000} = \SI{46.6}{W} \text{ (aerodynamic only)}
+\end{aligned}
+\end{equation}
+
+\noindent Adding propulsion efficiency losses ($\eta = 0.75$) and avionics ($\sim$30~W):
+\begin{equation}
+    P_{total} = \frac{46.6}{0.75} + 30 = \SI{92.1}{W}
+\end{equation}
+
+\noindent Net battery drain rate with solar:
+\begin{equation}
+    \dot{E}_{net} = P_{total} - P_{solar} = 92.1 - 232.8 \rightarrow \text{Net charge: solar exceeds cruise demand}
+\end{equation}
+
+\noindent This confirms that under STC illumination, the solar array alone can sustain cruise flight. The battery serves as a buffer for VTOL phases and cloudy-day operation.
+
+\noindent Estimated range (battery only, 5~kg payload):
+\begin{equation}
+    R_{batt} = \frac{E_{battery}}{P_{total}} \times V_\infty = \frac{977 \times 3600}{92.1} \times 18 \approx \SI{68}{km}
+\end{equation}
+
+%---------------------------------------------------------------
+\section*{Appendix C: Bill of Materials (BOM) -- Estimated}
+\addcontentsline{toc}{section}{Appendix C: Bill of Materials}
+%---------------------------------------------------------------
+
+\begin{longtable}{>{\centering\arraybackslash}p{0.5cm}>{\raggedright\arraybackslash}p{5.3cm}>{\centering\arraybackslash}p{1.1cm}>{\centering\arraybackslash}p{1.1cm}>{\centering\arraybackslash}p{2.5cm}>{\centering\arraybackslash}p{2.5cm}}
+\caption{Preliminary Bill of Materials} \label{tab:bom} \\
+\toprule
+\textbf{\#} & \textbf{Item} & \textbf{Qty} & \textbf{Unit} & \textbf{Unit (USD)} & \textbf{Total (USD)} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{\tablename\ \thetable{} (continued)} \\
+\toprule
+\textbf{\#} & \textbf{Item} & \textbf{Qty} & \textbf{Unit} & \textbf{Unit (USD)} & \textbf{Total (USD)} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & Sunnysky X4112S motor & 2 & ea & 85 & 170 \\
+2 & T-Motor U8 KV85 (rear) & 1 & ea & 220 & 220 \\
+3 & 22$\times$6.6 CF propeller pair & 2 & pair & 40 & 80 \\
+4 & 28$\times$9.2 CF folding prop & 1 & set & 55 & 55 \\
+5 & 12S 80A HV ESC & 3 & ea & 75 & 225 \\
+6 & Pixhawk 6X flight controller & 1 & ea & 350 & 350 \\
+7 & 22000~mAh 12S Li-ion pack & 1 & ea & 420 & 420 \\
+8 & IBC flexible solar cells (1~m$^2$ kit) & 1 & kit & 380 & 380 \\
+9 & ETFE film (1.2~m$^2$) & 1 & sheet & 60 & 60 \\
+10 & Al 7075-T6 billet (tilt arms) & 1 & set & 90 & 90 \\
+11 & CNC machining (outsourced) & 4 & h & 70 & 280 \\
+12 & T700 prepreg CFRP (wing skin) & 3 & m$^2$ & 85 & 255 \\
+13 & Nomex honeycomb core & 1 & sheet & 120 & 120 \\
+14 & UD CFRP spar tube 30/25~mm & 2 & ea & 45 & 90 \\
+15 & SKF 7004~CP bearings & 4 & ea & 28 & 112 \\
+16 & Digital servos (tilt) & 2 & ea & 35 & 70 \\
+17 & PETG-CF filament (fuselage) & 1.5 & kg & 45/kg & 67 \\
+18 & TC4 fastener set & 1 & lot & 65 & 65 \\
+19 & Misc. (wire, connectors, ESC mount) & 1 & lot & 150 & 150 \\
+\midrule
+& \textbf{Estimated Total} & & & & \textbf{3,239} \\
+\end{longtable}
+
+%---------------------------------------------------------------
+\section*{Appendix D: Glossary of Terms}
+\addcontentsline{toc}{section}{Appendix D: Glossary of Terms}
+%---------------------------------------------------------------
+
+\begin{description}[noitemsep, leftmargin=3cm, style=nextline]
+    \item[AMSL] Above Mean Sea Level
+    \item[BMS] Battery Management System
+    \item[CDR] Critical Design Review
+    \item[CFRP] Carbon Fibre Reinforced Polymer
+    \item[CTE] Coefficient of Thermal Expansion
+    \item[DFM] Design for Manufacturing
+    \item[ESC] Electronic Speed Controller
+    \item[ETFE] Ethylene Tetrafluoroethylene
+    \item[FEA] Finite Element Analysis
+    \item[FOC] Field-Oriented Control (motor drive algorithm)
+    \item[GCS] Ground Control Station
+    \item[H-VTOL] Heterogeneous Vertical Take-Off and Landing
+    \item[HIL] Hardware-In-the-Loop
+    \item[IBC] Interdigitated Back Contact (solar cell architecture)
+    \item[MTOW] Maximum Take-Off Weight
+    \item[PDR] Preliminary Design Review
+    \item[PV] Photovoltaic
+    \item[RANS] Reynolds-Averaged Navier-Stokes
+    \item[SF] Safety Factor
+    \item[SRR] Systems Requirements Review
+    \item[STC] Standard Test Conditions (1000~W/m$^2$, 25$^\circ$C, AM1.5G)
+    \item[TRL] Technology Readiness Level
+    \item[UAV] Unmanned Aerial Vehicle
+    \item[VTOL] Vertical Take-Off and Landing
+\end{description}
+
+%---------------------------------------------------------------
+\section*{Appendix E: References}
+\addcontentsline{toc}{section}{Appendix E: References}
+%---------------------------------------------------------------
+
+\begin{thebibliography}{99}
+
+\bibitem{anderson2011} Anderson, J.D. (2011). \textit{Introduction to Flight}, 7th ed. McGraw-Hill.
+
+\bibitem{boothroyd2010} Boothroyd, G., Dewhurst, P., \& Knight, W.A. (2010). \textit{Product Design for Manufacture and Assembly}, 3rd ed. CRC Press.
+
+\bibitem{sunnysky} Sunnysky. (2023). \textit{X4112S Motor Datasheet}. Sunnysky Technology Co.
+
+\bibitem{tmotor} T-Motor. (2023). \textit{U8 Series Motor Performance Data}. T-Motor Store.
+
+\bibitem{skf} SKF Group. (2023). \textit{Angular Contact Ball Bearings 7004 CP -- Product Data}. SKF.
+
+\bibitem{naca4412} Selig, M.S. et al. (1995). \textit{Summary of Low-Speed Airfoil Data}, Vol.~1. SoarTech Publications.
+
+\bibitem{drela} Drela, M. (1989). XFOIL: An Analysis and Design System for Low Reynolds Number Airfoils. \textit{Lecture Notes in Engineering}, 54, 1--12.
+
+\bibitem{roskam} Roskam, J. (2002). \textit{Airplane Design}, Parts I--VIII. DARcorporation.
+
+\bibitem{etfe} Deka, P., \& Misra, A. (2021). ETFE as solar encapsulant material: performance review. \textit{Solar Energy Materials and Solar Cells}, 228, 111118.
+
+\bibitem{ibc} Green, M.A. (2015). The passivated emitter and rear cell (PERC): from conception to mass production. \textit{Solar Energy Materials and Solar Cells}, 143, 190--197.
+
+\bibitem{astm_d3039} ASTM International. (2017). ASTM D3039/D3039M-17: Standard Test Method for Tensile Properties of Polymer Matrix Composite Materials.
+
+\bibitem{mil_anodise} U.S. Department of Defense. (2003). MIL-A-8625F: Anodic Coatings for Aluminum and Aluminum Alloys.
+
+\bibitem{iso286} ISO. (2010). ISO 286-1: Geometrical product specifications -- Limits and fits.
+
+\end{thebibliography}

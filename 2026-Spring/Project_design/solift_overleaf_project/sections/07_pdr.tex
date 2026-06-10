@@ -1,0 +1,137 @@
+%===============================================================
+% CHAPTER 7 – Preliminary Design Review (PDR) Document
+%===============================================================
+\chapter{Preliminary Design Review (PDR) Document}
+
+\section{Design Concept Summary}
+
+At the time of this Preliminary Design Review, the Solift H-VTOL design is at Technology Readiness Level (TRL) 3--4. The primary design concept -- a three-axis solar-powered tilt-rotor with a 12S heterogeneous drive train and ETFE-encapsulated IBC solar cells on the upper wing surface -- has been validated through:
+
+\begin{itemize}[noitemsep]
+    \item Phase~1 material selection matrix (Section~4.1), confirming suitability of CFRP/Nomex composites, aluminium alloys, and ETFE encapsulation for manufacturability and durability.
+    \item Phase~2 full parametric SolidWorks model with confirmed geometric envelope compliance, ensuring payload bay dimensions, wing span constraints, and CG envelope are satisfied.
+    \item Phase~3 FEA confirming $\text{SF} = 2.69$ at the critical tilt-arm root (Table~\ref{tab:fea}), demonstrating adequate structural safety margin under combined bending and torsion loads.
+    \item Phase~3 CFD confirming $L/D = 45.6$ at cruise (Table~\ref{tab:cfd}), validating aerodynamic efficiency and range potential under the selected MH114 airfoil.
+    \item Phase~4 tolerance stack-up confirming $\delta_{total} = 0.60^\circ < 1.0^\circ$ requirement, ensuring tilt mechanism precision and vibration control during transition.
+    \item Phase~5 manufacturing process plan with $\sim$39~h estimated production time per prototype unit, including CNC machining, composite layup, and subsystem assembly.
+\end{itemize}
+
+\noindent The design is recommended to proceed to \textbf{Critical Design Review (CDR)} subject to the action items in Section~\ref{sec:pdr_actions}.
+
+\section{Key Trade-Off Studies}
+
+Three key trade-off decisions were analysed and resolved during the design phase:
+
+\subsection{Trade-Off 1: Battery Mass vs.\ Solar Panel Area vs.\ Payload Capacity}
+
+The range equation for the Solift in cruise can be written as:
+\begin{equation}
+    R = \frac{\eta_{prop} \cdot (E_{battery} + E_{solar})}{m_{MTOW} \cdot g} \cdot \frac{L}{D}
+    \label{eq:range}
+\end{equation}
+
+A parametric sweep (Figure~\ref{fig:tradeoff_range}) shows:
+\begin{itemize}[noitemsep]
+    \item Increasing battery from 22~Ah to 30~Ah adds $\sim$18~km range but reduces payload from 5.0 to 3.2~kg due to higher mass.
+    \item Increasing solar area from 0.95 to 1.3~m$^2$ (requiring a 20\% wingspan increase) adds $\sim$22~km range while keeping payload at 5.0~kg, but adds 0.8~kg structural mass and complicates wing manufacturing.
+    \item \textbf{Decision:} Retain 22~Ah battery and 0.95~m$^2$ solar area as the best balance for the 120~km / 5~kg baseline requirement, ensuring manufacturability and mission compliance.
+\end{itemize}
+
+\subsection{Trade-Off 2: CNC vs.\ 3D-Printed Tilt Mechanism}
+
+\begin{table}[H]
+\centering
+\caption{Manufacturing Trade-Off: Tilt Mechanism Fabrication Method}
+\label{tab:tradeoff_mfg}
+\begin{tabularx}{\textwidth}{L{4.5cm} C{3cm} C{3cm} C{3cm}}
+\toprule
+\textbf{Criterion} & \textbf{CNC -- Al 7075-T6} & \textbf{DMLS -- Ti64} & \textbf{FDM -- CF-Nylon} \\
+\midrule
+Mass per arm (g) & 142 & 118 & 98 \\
+Fatigue life (estimated cycles) & $> 10^7$ & $> 10^7$ & $< 10^5$ \\
+Cost per arm (USD, prototype) & 280 & 950 & 35 \\
+Lead time (days) & 3 & 14 & 0.5 \\
+Dimensional accuracy & $\pm$0.05~mm & $\pm$0.1~mm & $\pm$0.3~mm \\
+\textbf{Decision} & \textbf{Selected} & Rejected (cost) & Rejected (fatigue) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\noindent CNC machining of 7075-T6 aluminium was selected for its balance of strength, fatigue life, and cost. DMLS titanium offered weight savings but was prohibitively expensive, while FDM CF-Nylon was cost-effective but failed fatigue requirements.
+
+\subsection{Trade-Off 3: Airfoil Selection}
+
+Three airfoils were evaluated at $Re = 3 \times 10^5$:
+\begin{itemize}[noitemsep]
+    \item \textbf{MH114:} $C_{L,max} = 1.52$, $L/D_{max} = 46.3$. \textbf{Selected for its high lift-to-drag ratio, benign stall behaviour, and compatibility with conformal solar cell integration.}
+    \item Clark-Y: $C_{L,max} = 1.41$, $L/D_{max} = 41.0$. Inferior $L/D$; rejected.
+    \item Selig S1223: $C_{L,max} = 2.21$, $L/D_{max} = 38.5$. High lift but low $L/D$; excessive curvature unsuitable for solar cell integration.
+\end{itemize}
+
+\section{Risk Assessment Matrix}
+
+\begin{table}[htbp]
+\centering
+\caption{PDR Risk Assessment Matrix}
+\label{tab:risk}
+\small
+\begin{tabularx}{\textwidth}{C{1cm} L{3.5cm} C{1.4cm} C{1.4cm} C{1cm} X}
+\toprule
+\textbf{ID} & \textbf{Risk Description} & \textbf{Likelihood (1--5)} & \textbf{Severity (1--5)} & \textbf{RPN} & \textbf{Mitigation} \\
+\midrule
+R-01 & VTOL-to-cruise power failure causing stall during transition & 2 & 5 & 10 & Dual-motor redundancy; abort-to-hover logic; geofenced flight test zone \\
+R-02 & CNC tilt-arm precision defect causing excess vibration & 2 & 4 & 8 & CMM inspection of all arms; vibration spectrum test pre-flight \\
+R-03 & Solar cell delamination under thermal cycling & 3 & 3 & 9 & ETFE vacuum lamination; ground-truth temperature cycling test (50 cycles, $-10$ to $+55^\circ$C) \\
+R-04 & Battery thermal runaway during fast recharge & 2 & 5 & 10 & BMS with cell-level temperature monitoring; C-rate limited to 1.5C \\
+R-05 & CFRP wing delamination at spar root & 1 & 5 & 5 & FEA-verified joint design; proof-load test to 1.5$\times$ MTOW \\
+R-06 & Flight controller firmware instability during tilt transition & 3 & 4 & 12 & Hardware-in-the-loop (HIL) simulation; Pixhawk 6X with ArduPlane VTOL mode \\
+\bottomrule
+\multicolumn{6}{l}{\small RPN = Risk Priority Number = Likelihood $\times$ Severity} \\
+\end{tabularx}
+\end{table}
+
+\section{Review Decisions and Action Items}
+\label{sec:pdr_actions}
+
+The following action items were raised during the PDR and must be resolved prior to CDR:
+
+\begin{table}[H]
+\centering
+\caption{PDR Action Items}
+\label{tab:actions}
+\begin{tabularx}{\textwidth}{C{1cm} L{5cm} L{3cm} C{2cm} C{1.5cm}}
+\toprule
+\textbf{AI\#} & \textbf{Action Required} & \textbf{Owner} & \textbf{Due Date} & \textbf{Status} \\
+\midrule
+AI-01 & Complete 3D FEA of full tilt arm under combined bending + torsion & [Name 1] & [Date] & Open \\
+AI-02 & Procure Sunnysky X4112S motors and measure thrust curve at 12S & [Name 2] & [Date] & Open \\
+AI-03 & Perform thermal cycling test on ETFE/IBC coupon (50 cycles) & [Name 3] & [Date] & Open \\
+AI-04 & Validate VTOL-to-cruise transition in HIL simulation (ArduPlane) & [Name 4] & [Date] & Open \\
+AI-05 & Update SRR traceability matrix to reflect Phase~4 tolerance decisions & [Name 1] & [Date] & Open \\
+AI-06 & Obtain supplier quotations for 7075-T6 billet and CNC machining & [Name 2] & [Date] & Open \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\noindent \textbf{Overall PDR Verdict:} The Solift H-VTOL design is approved to proceed to the fabrication phase, pending closure of AI-01, AI-02, and AI-04 (flight-critical items). These action items directly affect structural integrity, propulsion performance, and transition stability, and therefore must be resolved before Critical Design Review. All remaining action items (AI-03, AI-05, AI-06) are considered secondary but will be reviewed at CDR to ensure manufacturability, environmental durability, and supply chain readiness.
+
+\noindent The PDR confirmed that:
+\begin{itemize}[noitemsep]
+    \item The design concept meets baseline mission requirements (5~kg payload, 120~km range, VTOL capability).
+    \item Structural and aerodynamic analyses provide sufficient safety margins for tilt-arm loads and cruise efficiency.
+    \item Manufacturing trade-offs (CNC vs.\ additive vs.\ polymer) were resolved in favor of CNC aluminium for reliability and cost balance.
+    \item Risk mitigation strategies are in place for critical subsystems (tilt mechanism, solar integration, battery safety).
+    \item Verification methods (flight tests, FEA/CFD, tolerance stack-up, environmental cycling) are aligned with SRR requirements.
+\end{itemize}
+
+\noindent \textbf{Next Steps:}  
+The team will now focus on closing open action items, finalizing supplier contracts, and preparing prototype fabrication. The Critical Design Review (CDR) will emphasize:
+\begin{enumerate}[noitemsep]
+    \item Validation of tilt-arm FEA under combined load cases.
+    \item Empirical thrust curves for selected motors at 12S voltage.
+    \item Hardware-in-the-loop validation of VTOL-to-cruise transition logic.
+    \item Confirmation of ETFE/IBC solar coupon durability under thermal cycling.
+    \item Updated traceability matrix reflecting tolerance and manufacturability decisions.
+\end{enumerate}
+
+\noindent With these steps completed, Solift will advance from TRL~3--4 toward TRL~5, entering the prototype fabrication and subsystem integration stage.

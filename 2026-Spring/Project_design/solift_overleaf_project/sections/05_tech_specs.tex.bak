@@ -1,0 +1,866 @@
+%===============================================================
+% CHAPTER 5 – Technical Specifications (System Data Sheet)
+%===============================================================
+\chapter{Technical Specifications}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{ll}
+\textbf{Platform:}           & Solift H-VTOL (Heavy-Lift Heterogeneous VTOL) \\
+\textbf{Designation:}        & TECHPLANE001 \\
+\textbf{Configuration:}      & Three-Axis Tilt-Rotor + Fixed Rear Lift \\
+\textbf{Primary Mission:}    & Urban and suburban cargo logistics \\
+\textbf{Document Type:}      & System Data Sheet (SDS) \\
+\textbf{Document Status:}    & Preliminary Design Review (PDR) Release \\
+\end{tabular}
+\end{table}
+
+%---------------------------------------------------------------
+\section{Introduction and Document Scope}
+%---------------------------------------------------------------
+
+This chapter constitutes Part 5 of the Final Design Report for the Solift H-VTOL project, prepared in fulfilment of the Design for Manufacturability (DFM) course requirements. Its purpose is to consolidate all quantitative design targets, material specifications, interface definitions, environmental ratings, and applicable compliance standards into a single authoritative reference document.
+
+The specifications presented herein are organised around eight thematic domains, each following an engineering data-sheet convention consistent with industrial practice (e.g., DJI Agras, Xag P100, Zipline Platform 2):
+
+\begin{enumerate}[noitemsep]
+  \item Physical and Dimensional Parameters
+  \item Propulsion and Electrical Systems
+  \item Materials and Surface Treatments
+  \item Structural and Mechanical Specifications
+  \item Flight Performance and Operational Envelope
+  \item Environmental and Survivability Specifications
+  \item Avionics, Software, and Interface Standards
+  \item Safety, Regulatory, and Compliance Standards
+\end{enumerate}
+
+\subsection{Applicable Documents and Reference Standards}
+
+The following standards are referenced throughout this chapter. Compliance with each applicable standard is indicated per sub-section.
+
+\begin{table}[H]
+\centering
+\caption{Reference Standards and Applicable Codes}
+\begin{tabularx}{\textwidth}{L{2.2cm} L{4cm} X}
+\toprule
+\textbf{Standard} &
+\textbf{Issuing Body} &
+\textbf{Scope of Application} \\
+\midrule
+ISO 2768-1/2    & ISO / TC 213      & General tolerances for linear dimensions and geometrical tolerances \\
+ASTM B209       & ASTM International & Aluminium and aluminium-alloy sheet and plate specification \\
+MIL-A-8625F     & U.S. DoD          & Anodic coatings for aluminium and aluminium alloys (Type III hard anodise) \\
+ASTM D3039      & ASTM International & Tensile properties of polymer matrix composite materials \\
+IEC 61215-1     & IEC / TC 82       & Terrestrial photovoltaic modules -- design qualification and type approval \\
+IEC 60068-2     & IEC / TC 104      & Environmental testing -- temperature, humidity, vibration, shock \\
+IEC 62368-1     & IEC / TC 108      & Audio/video and IT equipment -- safety requirements \\
+RTCA DO-160G    & RTCA              & Environmental conditions and test procedures for airborne equipment \\
+ISO 9283        & ISO / TC 184      & Manipulating industrial robots -- performance criteria \\
+ASME Y14.5-2018 & ASME             & Dimensioning and tolerancing (GD\&T) \\
+IEEE 802.11     & IEEE              & Wireless LAN standard (ground control data link) \\
+EUROCAE ED-269  & EUROCAE           & Minimum operational performance standard for UAS geo-caging \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+%---------------------------------------------------------------
+\section{Physical and Dimensional Parameters}
+%---------------------------------------------------------------
+
+This section defines the geometric envelope, mass budget, and centre-of-gravity (CG) limits of the Solift H-VTOL in its maximum-take-off configuration.
+
+\subsection{Airframe Geometry}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\linewidth]{figures/three-view.png}
+  \caption{Solift H-VTOL Three-View Orthographic Drawing (Top / Front / Side)}
+  \label{fig:threeview}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Geometric Envelope -- Principal Dimensions}
+\begin{tabularx}{\textwidth}{L{4.5cm} C{2.5cm} C{1.8cm} C{1.5cm} X}
+\toprule
+\textbf{Parameter} &
+\textbf{Value} &
+\textbf{Tolerance} &
+\textbf{Unit} &
+\textbf{Remark} \\
+\midrule
+Overall Wingspan (tip to tip)   & 3050 & $\pm$5   & mm  & Net aerodynamic span; excl.\ motor nacelles \\
+Overall Fuselage Length         & 1620 & $\pm$5   & mm  & Nose-cone tip to tail skid \\
+Maximum Fuselage Width          & 320  & $\pm$3   & mm  & At cargo bay cross-section \\
+Maximum Fuselage Height         & 280  & $\pm$3   & mm  & Including ventral cargo pod \\
+Wing Chord (mean aerodynamic)   & 380  & $\pm$2   & mm  & MH114 aerofoil profile \\
+Wing Aspect Ratio               & 8.03 & --       & --  & $AR = b^2/S$; $b=3.05\,\text{m}$, $S=1.159\,\text{m}^2$ \\
+Total Planform Area ($S$)       & 1.16 & $\pm$0.02 & m\textsuperscript{2} & Both semi-wings combined \\
+Tilt-Rotor Nacelle Offset       & 420  & $\pm$3   & mm  & Spanwise from fuselage CL \\
+Rear Motor Pylon Height         & 185  & $\pm$3   & mm  & Above fuselage datum plane \\
+Landing Gear Footprint          & $600\times450$ & $\pm$5 & mm & Width $\times$ depth \\
+Ground Clearance (belly)        & 120  & $\pm$5   & mm  & Fully loaded, level surface \\
+Cargo Bay Internal Dimensions   & $500\times300\times200$ & $\pm$3 & mm & L $\times$ W $\times$ H \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Mass Budget and Centre-of-Gravity Envelope}
+
+\begin{table}[H]
+\centering
+\caption{Mass Budget -- Component-Level Breakdown}
+\begin{tabularx}{\textwidth}{L{5cm} C{2.2cm} C{2.2cm} X}
+\toprule
+\textbf{Subsystem / Component} &
+\textbf{Mass (g)} &
+\textbf{\% of OEW} &
+\textbf{Notes} \\
+\midrule
+Airframe structure (CF/Nomex)      & 1800 & 25.7 & Primary load-bearing shell \\
+Tilt mechanism (Al 7075-T6)        & 420  & 6.0  & Per side $\times$2 = 840 g \\
+Wing ribs and spars                & 360  & 5.1  & IM7-grade carbon pultrusion \\
+Main battery pack (22 Ah)          & 1680 & 24.0 & 12S silicon-anode LiPo \\
+Front tilt-motors $\times$2        & 440  & 6.3  & Sunnysky X4112S, 220 g each \\
+Rear lift motor $\times$1          & 320  & 4.6  & T-Motor U8 class \\
+Propellers (CF, folding) $\times$3 & 210  & 3.0  & 22'' front + 28'' rear \\
+ESC units $\times$3                & 195  & 2.8  & 12S 80A HV \\
+Flight controller + IMU            & 85   & 1.2  & Cube Orange+ \\
+Solar panel array (ETFE/IBC)       & 620  & 8.9  & 0.95 m$^2$, 24.5\% eff. \\
+MPPT solar charge controller       & 95   & 1.4  & Custom 12S-compatible \\
+Wiring harness + connectors        & 210  & 3.0  & MR60 / AS150 / XT90S \\
+Avionics bay (GPS, telemetry)      & 145  & 2.1  & U-Blox F9P, SiK 915 MHz \\
+Landing gear (CF tubes + PA12)     & 180  & 2.6  & Fixed tricycle configuration \\
+Fasteners, misc hardware           & 140  & 2.0  & TC4 titanium bolts \\
+\midrule
+\textbf{Operating Empty Weight (OEW)}   & \textbf{7000}  & \textbf{100} & \\
+\textbf{Maximum Payload}                & \textbf{5000}  & --           & Design target \\
+\textbf{Maximum Take-Off Weight (MTOW)} & \textbf{12\,000} & --         & Structural limit \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Centre-of-Gravity Envelope}
+\begin{tabularx}{\textwidth}{L{4.5cm} C{2.8cm} C{2.2cm} X}
+\toprule
+\textbf{Load Condition} &
+\textbf{CG (mm fwd of MAC LE)} &
+\textbf{\% MAC} &
+\textbf{Limit} \\
+\midrule
+Empty (no payload, no battery)  & 148 & 38.9 & Within envelope \\
+OEW + battery, no payload       & 162 & 42.6 & Within envelope \\
+MTOW (max forward payload)      & 139 & 36.6 & Forward limit: 35\% MAC \\
+MTOW (max aft payload)          & 179 & 47.1 & Aft limit: 50\% MAC \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+%---------------------------------------------------------------
+\section{Propulsion and Electrical System Specifications}
+%---------------------------------------------------------------
+
+\subsection{Motor Specifications}
+
+The Solift employs a \textbf{heterogeneous propulsion architecture}: two Sunnysky X4112S outrunner motors are mounted on tilting nacelles to provide both hover lift and forward thrust, while one large-diameter T-Motor U8-class outrunner is fixed aft for supplemental lift in VTOL mode.
+
+\begin{table}[H]
+\centering
+\caption{Motor Technical Specifications}
+\begin{tabularx}{\textwidth}{L{4.5cm} C{3cm} C{3cm} X}
+\toprule
+\textbf{Parameter} &
+\textbf{Front (Tilt) Motor} &
+\textbf{Rear (Lift) Motor} &
+\textbf{Notes} \\
+\midrule
+Model                    & Sunnysky X4112S & T-Motor U8 ($\approx$85 KV) & \\
+KV Rating (RPM/V)        & 340 KV          & 85 KV               & Nominal, no load \\
+Stator Diameter          & 41 mm           & $\sim$100 mm        & \\
+Stator Height            & 12 mm           & $\sim$30 mm         & \\
+Motor Mass               & 220 g           & 320 g               & Per unit \\
+Maximum Continuous Power & 1500 W          & 2200 W              & At 44.4 V bus \\
+Maximum Burst Power (10s)& 1800 W          & 2800 W              & Thermal limit \\
+Peak Efficiency          & $>$90\%         & $>$92\%             & At cruise throttle \\
+Max Continuous Current   & 35 A            & 50 A                & Per motor \\
+Internal Resistance      & $<$25 m$\Omega$ & $<$15 m$\Omega$     & Phase-to-phase \\
+Shaft Diameter           & 8 mm            & 12 mm               & \\
+Propeller Recommendation & 22''$\times$6.6'' CF & 28''$\times$9.2'' CF fold. & CW/CCW pairs \\
+Static Thrust (hover)    & $\sim$4.5 kg    & $\sim$5.5 kg        & At 44.4 V, full throttle \\
+Compliance               & CE, RoHS        & CE, RoHS            & \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Battery System}
+
+\begin{table}[htbp]
+\centering
+\caption{Main Battery Pack Specifications}
+\small
+\begin{tabularx}{\textwidth}{L{5cm} C{3cm} C{1.5cm} X}
+\toprule
+\textbf{Parameter} &
+\textbf{Value} &
+\textbf{Unit} &
+\textbf{Remarks} \\
+\midrule
+Chemistry                & Si-anode LiPo        & --    & Higher Wh/kg vs.\ conventional \\
+Cell configuration       & 12S3P                & --    & Nominal 44.4 V, 3 parallel strings \\
+Nominal Voltage          & 44.4                 & V     & Per 3.7 V/cell \\
+Fully Charged Voltage    & 50.4                 & V     & Per 4.2 V/cell \\
+Minimum Discharge Voltage & 39.6               & V     & Per 3.3 V/cell (LVC) \\
+Capacity                 & 22\,000              & mAh   & 22 Ah \\
+Energy Content           & 976.8                & Wh    & Nominal (44.4 V $\times$ 22 Ah) \\
+Maximum Continuous Discharge & 15C             & --    & 330 A total \\
+Mass                     & 1680                 & g     & Target (Si-anode cell) \\
+Specific Energy          & $\approx$581         & Wh/kg & Design target \\
+Charging Rate (standard) & 1C                  & --    & 22 A, approx 75 min \\
+Charging Rate (fast)     & 2C                  & --    & 44 A, approx 38 min \\
+Operating Temperature    & $-10$ to $+45$       & \textdegree C & Reduced capacity below 0\textdegree C \\
+Storage Temperature      & $+5$ to $+25$        & \textdegree C & At 50\% state-of-charge \\
+BMS Protection           & OVP, UVP, OCP, OTP  & --    & Integrated cell-level BMS \\
+Connector                & XT90S Anti-spark     & --    & 4 AWG silicone wire \\
+Compliance               & UN 38.3, IEC 62133  & --    & Transport and safety \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Electronic Speed Controllers (ESC)}
+
+\begin{table}[H]
+\centering
+\caption{ESC Specifications (per unit, $\times$3 installed)}
+\begin{tabularx}{\textwidth}{L{4.8cm} C{3cm} C{1.5cm} X}
+\toprule
+\textbf{Parameter} &
+\textbf{Value} &
+\textbf{Unit} &
+\textbf{Notes} \\
+\midrule
+Voltage Rating           & 12S (50.4 V max)     & V     & HV series \\
+Continuous Current       & 80                   & A     & Thermally managed \\
+Burst Current (5 s)      & 100                  & A     & \\
+Control Protocol         & DShot600             & --    & Digital, bidirectional \\
+Communication            & DShot600 / PWM       & --    & Selectable via flight controller \\
+Telemetry Output         & ESC telemetry (UART) & --    & RPM, current, temp \\
+Motor Control Algorithm  & Field-Oriented Control (FOC) & -- & Reduced cogging, higher efficiency \\
+PWM Frequency            & 48                   & kHz   & Active freewheeling \\
+Operating Temperature    & $-10$ to $+85$       & \textdegree C & Junction temperature \\
+Mass                     & 65                   & g     & Per unit \\
+Dimensions               & $55\times35\times12$ & mm    & L $\times$ W $\times$ H \\
+Protections              & OVP, UVP, LVC, OCP, OTP & -- & Full suite \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Solar Photovoltaic Subsystem}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\linewidth]{figures/solar_layout.png}
+  \caption{Solar PV Array Layout on Wing Upper Surface (Top View)}
+  \label{fig:solarlayout}
+\end{figure}
+
+\begin{table}[htbp]
+\centering
+\caption{Photovoltaic Array Specifications}
+\small
+\begin{tabularx}{\textwidth}{L{5.2cm} C{3cm} C{1.5cm} X}
+\toprule
+\textbf{Parameter} &
+\textbf{Value} &
+\textbf{Unit} &
+\textbf{Notes} \\
+\midrule
+Cell Technology          & IBC (Interdigitated Back Contact) & -- & Mono-Si, no front busbar shadow \\
+Encapsulation Film       & ETFE (Ethylene Tetrafluoroethylene) & -- & Transmittance $>$95\%, UV stable \\
+Active Panel Area        & 0.95                & m\textsuperscript{2} & Deployed on wing upper surface \\
+Cell Conversion Efficiency & 24.5             & \%    & STC: 1000 W/m\textsuperscript{2}, 25\textdegree C, AM1.5 \\
+Peak Array Power ($P_{max}$) & $\approx$232   & W     & $0.95\,\text{m}^2 \times 1000\,\text{W/m}^2 \times 0.245$ \\
+Open-Circuit Voltage ($V_{oc}$) & 58.5        & V     & 12S-compatible string \\
+Maximum Power Voltage ($V_{mp}$) & 50.2       & V     & \\
+Short-Circuit Current ($I_{sc}$) & 4.85       & A     & \\
+Maximum Power Current ($I_{mp}$) & 4.62       & A     & \\
+Temperature Coefficient ($P_{max}$) & $-0.29$ & \%/\textdegree C & \\
+MPPT Controller Type     & Perturb \& Observe (P\&O) & -- & Custom 12S HV MPPT \\
+MPPT Efficiency          & $>$98             & \%    & \\
+Panel Mass (total)       & 620               & g     & incl.\ wiring, connectors \\
+Panel Thickness          & $<$1.5            & mm    & Flexible laminate \\
+Bend Radius (min)        & 300               & mm    & \\
+Compliance               & IEC 61215-1, IEC 61730 & -- & Design qualification \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Electrical Power Distribution}
+
+\begin{table}[H]
+\centering
+\caption{Power Distribution Architecture}
+\begin{tabularx}{\textwidth}{L{5cm} C{2.5cm} C{1.8cm} X}
+\toprule
+\textbf{Parameter} &
+\textbf{Value} &
+\textbf{Unit} &
+\textbf{Notes} \\
+\midrule
+Main Bus Voltage          & 44.4 (nom.)      & V     & 12S lithium, reduces ohmic losses \\
+Propulsion Bus Rating     & 50.4 max         & V     & Main power rail \\
+Avionics Bus Voltage      & 5.2 / 12.0       & V     & Dual-rail UBEC output \\
+Avionics Bus Current      & 3.0 / 2.0        & A     & Steady-state \\
+Main Fuse                 & 250              & A     & ATC blade (main positive rail) \\
+ESC Fuse (per branch)     & 100              & A     & Inline automotive fuse \\
+Wiring Gauge (main)       & 4                & AWG   & Silicone-insulated multi-strand \\
+Wiring Gauge (avionics)   & 22               & AWG   & Twisted-pair for signal lines \\
+Main Connector (battery)  & XT90S anti-spark & --    & \\
+Motor Phase Connector     & MR60 (3.5 mm bullet) & -- & Gold-plated, 60 A rated \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+%---------------------------------------------------------------
+\section{Materials and Surface Treatment Specifications}
+%---------------------------------------------------------------
+
+To satisfy the anti-torsional stiffness requirements of the heavy-lift tilt mechanism and the corrosion demands of outdoor operations, all primary load-bearing components use aerospace-grade materials with military-specification surface treatments.
+
+\subsection{Material Selection Summary}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{figures/materials_selection.png}
+  \caption{Material Selection Radar Chart for Critical Structural Components}
+  \label{fig:materialradar}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Component-Level Material Specifications}
+\begin{tabularx}{\textwidth}{L{3cm} L{3.2cm} L{2.5cm} X}
+\toprule
+\textbf{Component} &
+\textbf{Material} &
+\textbf{Standard} &
+\textbf{Treatment and Minimum Requirements} \\
+\midrule
+Main wing shell & Prepreg CFRP / Nomex honeycomb sandwich & ASTM D3039 & UV-stable matte topcoat; tensile strength $>$600 MPa; fibre vol.\ fraction 60\% \\
+Fuselage shell  & Prepreg CFRP (IM7/epoxy) & ASTM D3039 & Same as wing; minimum skin thickness 1.2 mm \\
+Tilt mechanism housing & Al 7075-T6 & ASTM B209 & Type III hard anodise (MIL-A-8625F); hardness $>$150 HB; Ra $\leq$1.6 \textmu m on bearing seats \\
+Tilt shaft (pivot) & Al 7075-T6 or Ti-6Al-4V & ASTM B265 (Ti) & Ground finish Ra $\leq$0.8 \textmu m; run-out $\leq$0.05 mm TIR \\
+Fasteners (structural) & Ti-6Al-4V (TC4) & AMS 4928 & Grade 5 titanium; eliminates galvanic corrosion with CFRP \\
+Landing gear struts & Pultrusion CFRP tube & ASTM D2290 & Wrapped end fittings; gloss clear coat \\
+Motor nacelle cowling & PETG / ASA FDM print & -- & Non-structural; 20\% infill; UV-stable ASA preferred \\
+Cargo bay liner & PA12 (Nylon 12) SLS & -- & Food-grade; smooth bore for hygiene logistics option \\
+Solar substrate & ETFE film on CFRP shell & IEC 61215 & Vacuum laminated; peel strength $>$50 N/cm \\
+Bearing races (tilt pivot) & 440C stainless steel & ABEC-7 class & Greased sealed (2RS); radial clearance C2 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Key Material Mechanical Properties}
+
+\begin{table}[H]
+\centering
+\caption{Mechanical Properties of Primary Structural Materials}
+\begin{tabularx}{\textwidth}{L{3.5cm} C{1.8cm} C{1.8cm} C{2cm} C{2cm} C{1.8cm}}
+\toprule
+\textbf{Material} &
+\textbf{$\rho$ (g/cm\textsuperscript{3})} &
+\textbf{$E$ (GPa)} &
+\textbf{$\sigma_{UTS}$ (MPa)} &
+\textbf{$\sigma_{Y}$ (MPa)} &
+\textbf{Spec.\ Str.} \\
+\midrule
+CFRP UD (0\textdegree) IM7/epoxy & 1.58 & 170 & 2500 & --   & 1582 kNm/kg \\
+CFRP Quasi-isotropic    & 1.55 & 70  & 600  & --   & 387 kNm/kg \\
+Al 7075-T6              & 2.81 & 72  & 572  & 503  & 203 kNm/kg \\
+Ti-6Al-4V (grade 5)     & 4.43 & 114 & 950  & 880  & 214 kNm/kg \\
+Al 6061-T6              & 2.70 & 69  & 310  & 276  & 115 kNm/kg \\
+Nomex honeycomb (core)  & 0.048 & 0.16 & --  & 1.4$^*$ & -- \\
+\bottomrule
+\multicolumn{6}{l}{\small $^*$ Compressive flatwise strength (MPa).} \\
+\end{tabularx}
+\end{table}
+
+\subsection{Corrosion Protection Strategy}
+
+Given the operational environment (outdoor logistics, salt-mist rated to IP54), a multi-layer corrosion protection strategy is mandated for all metallic parts:
+
+\begin{enumerate}[noitemsep]
+  \item \textbf{CFRP--Al interface:} All aluminium parts in contact with CFRP must be isolated with a glass-fibre fabric ply or PTFE tape to prevent galvanic corrosion ($\Delta E^\circ_{\text{CFRP--Al}} \approx 1.0\,\text{V}$).
+  \item \textbf{Aluminium components:} Type III hard anodise per MIL-A-8625F, minimum coating thickness 25 \textmu m.
+  \item \textbf{Steel fasteners:} Prohibited; replaced with TC4 titanium to eliminate galvanic couples.
+  \item \textbf{Sealant:} PR-1422 polysulfide sealant applied to all wing/fuselage faying surfaces.
+\end{enumerate}
+
+%---------------------------------------------------------------
+\section{Structural and Mechanical Specifications}
+%---------------------------------------------------------------
+
+\subsection{Structural Design Loads}
+
+\begin{table}[H]
+\centering
+\caption{Structural Design Load Cases}
+\begin{tabularx}{\textwidth}{L{3.5cm} C{2cm} C{2.2cm} C{2cm} X}
+\toprule
+\textbf{Load Case} &
+\textbf{Load Factor $n$} &
+\textbf{Applied Force} &
+\textbf{Safety Factor} &
+\textbf{Critical Component} \\
+\midrule
+Max hover thrust (symmetric) & 1.5 & 176 N/motor & 1.5 & Tilt nacelle root joint \\
+Transition phase (VTOL$\to$cruise) & 2.0 & 353 N (gyro) & 1.5 & Tilt mechanism pivot shaft \\
+Max forward cruise & 1.3 & 78 N drag & 1.5 & Wing root spar \\
+Hard landing (vertical drop) & 3.0 & 353 N & 1.5 & Landing gear and belly frame \\
+Gust load (15 m/s gust) & 2.5 & $\sim$295 N & 1.5 & Wing spar \\
+Torsional (motor torque reaction) & -- & 12 Nm/motor & 1.5 & Nacelle torsion box \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Tilt Mechanism Mechanical Specifications}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\linewidth]{figures/tilting_explosion.png}
+  \caption{Tilt-Rotor Nacelle Assembly -- Exploded Isometric View (SolidWorks)}
+  \label{fig:tiltexploded}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Tilt Mechanism Specifications}
+\begin{tabularx}{\textwidth}{L{5cm} C{3cm} C{1.5cm} X}
+\toprule
+\textbf{Parameter} &
+\textbf{Value} &
+\textbf{Unit} &
+\textbf{Notes} \\
+\midrule
+Tilt axis orientation        & Spanwise (Y-axis)  & --  & Parallel to wing LE \\
+Tilt angle range (VTOL)      & 90 (vertical)      & \textdegree & Motor thrust vector upward \\
+Tilt angle range (cruise)    & 0 (forward)        & \textdegree & Motor thrust vector fwd \\
+Tilt angular velocity (max)  & 30                 & \textdegree/s & Commanded by flight controller \\
+Transition time (90\textdegree\ to 0\textdegree) & $\leq$4 & s & Full VTOL-to-cruise \\
+Actuating servo torque       & 25                 & kg\textperiodcentered cm & Digital HV servo \\
+Pivot shaft diameter         & 12 h6              & mm  & ISO 286 fit with bearing bore \\
+Bearing bore                 & 12 H7              & mm  & H7/h6 sliding fit \\
+Pivot shaft material         & Al 7075-T6 or Ti-6Al-4V & -- & FEA to confirm \\
+Pivot shaft run-out (TIR)    & $\leq$0.05         & mm  & ASME Y14.5-2018 \\
+Bearing type                 & 6001-2RS (440C SS) & --  & Deep groove, ABEC-7 \\
+Anti-backlash mechanism      & Spring-loaded double bearing & -- & Eliminates play in cruise \\
+Maximum tilt moment load     & 12                 & Nm  & Gyroscopic + aerodynamic \\
+IP rating (nacelle interior) & IP54               & --  & Sealed cable routing \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Tolerance Specifications (Critical Fits)}
+
+\begin{table}[H]
+\centering
+\caption{GD\&T Tolerance Callouts for Critical Interfaces (per ASME Y14.5-2018)}
+\begin{tabularx}{\textwidth}{L{4cm} C{2.2cm} C{2.2cm} C{2cm} X}
+\toprule
+\textbf{Interface} &
+\textbf{Shaft} &
+\textbf{Hole} &
+\textbf{Fit Class} &
+\textbf{Functional Requirement} \\
+\midrule
+Tilt pivot shaft / bearing bore & 12 h6 & 12 H7 & Sliding (clearance) & Free rotation, zero play \\
+Motor shaft / prop adapter hub  & 8 k6  & 8 H7  & Transition          & No slip under max torque \\
+Wing spar / root rib slot       & --    & $\pm$0.1 mm & ISO 2768-f     & Even load distribution \\
+ESC mounting boss / frame       & M3$\times$0.5 & M3 H7 & Threaded clearance & Assembly without stress \\
+Battery compartment slide rails & 15 h8 & 15 H9 & Running clearance   & Tool-free battery swap \\
+Cargo bay door hinge pin        & 6 h6  & 6 H8  & Sliding             & Smooth, repeatable closure \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+%---------------------------------------------------------------
+\section{Flight Performance and Operational Envelope}
+%---------------------------------------------------------------
+
+\subsection{Hover Performance}
+
+The total required thrust margin in hover is calculated below to validate the motor selection:
+
+\begin{align}
+  T_{\text{required}} &= MTOW \times g = 12.0\,\text{kg} \times 9.81\,\text{m/s}^2 = 117.7\,\text{N} \\
+  T_{\text{available}} &= 2 \times T_{\text{front}} + 1 \times T_{\text{rear}} \nonumber \\
+                       &= 2 \times 44.1\,\text{N} + 53.9\,\text{N} = 142.1\,\text{N} \\
+  \text{Thrust Margin} &= \frac{T_{\text{available}} - T_{\text{required}}}{T_{\text{required}}} \times 100\%
+                       = \frac{142.1 - 117.7}{117.7} \times 100\% = \mathbf{20.7\%}
+\end{align}
+
+A thrust margin of $\geq$20\% is the minimum required to accommodate wind gusts and dynamic manoeuvres without saturation. The Solift design achieves exactly this threshold.
+
+\begin{table}[H]
+\centering
+\caption{Flight Performance Specifications}
+\begin{tabularx}{\textwidth}{L{5cm} C{3cm} C{1.8cm} X}
+\toprule
+\textbf{Parameter} &
+\textbf{Value} &
+\textbf{Unit} &
+\textbf{Notes / Conditions} \\
+\midrule
+Maximum Take-Off Weight (MTOW)    & 12.0          & kg         & Structural design limit \\
+Hover Thrust-to-Weight Ratio      & 1.21          & --         & All motors at 100\% throttle \\
+Rated Cruise Speed                & 65 (18)       & km/h (m/s) & Best L/D and PV harvest \\
+Maximum Speed ($V_{max}$)         & $\leq$120     & km/h       & Structural flutter margin \\
+Stall Speed ($V_{stall}$, cruise) & $\sim$48      & km/h       & MTOW, sea level, ISA \\
+Hover Endurance (battery only)    & $\approx$22   & min        & MTOW, no solar harvest \\
+Cruise Endurance (battery only)   & $\approx$115  & min        & 65 km/h, no solar harvest \\
+Maximum Range (solar-assisted)    & $\geq$120     & km         & 5 kg payload, full sun \\
+Solar Recharge Rate (cruise)      & $\approx$232  & W          & STC conditions \\
+Net Power Balance (cruise, sun)   & +95           & W          & Solar harvest minus avionics draw \\
+Service Ceiling                   & 3000          & m ASL      & Battery capacity corrected \\
+Climb Rate (VTOL mode)            & $\approx$3.5  & m/s        & MTOW, standard atmosphere \\
+Mission Radius (typical)          & 10--30        & km         & Urban same-day logistics \\
+Transition Duration (VTOL$\to$cruise) & $\leq$4  & s          & At 300 m safe altitude \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Power Budget Analysis}
+
+\begin{table}[H]
+\centering
+\caption{Power Budget -- Cruise at 65 km/h, MTOW, STC Solar Conditions}
+\begin{tabularx}{\textwidth}{L{5cm} C{2.5cm} C{1.5cm} X}
+\toprule
+\textbf{Load} &
+\textbf{Power (W)} &
+\textbf{Sign} &
+\textbf{Notes} \\
+\midrule
+Two front motors (cruise)  & 520    & $-$ & Each $\approx$260 W at cruise throttle \\
+Rear motor (idle in cruise)& 35     & $-$ & Windmilling / minimal assist \\
+Flight controller + IMU    & 8      & $-$ & Cube Orange+ \\
+GPS + Telemetry + RC Rx    & 5      & $-$ & U-Blox F9P, SiK, ELRS \\
+Camera / payload sensors   & 12     & $-$ & Optional \\
+Avionics UBEC losses       & 4      & $-$ & 90\% efficiency regulator \\
+Solar PV harvest (STC)     & 232    & $+$ & 0.95 m\textsuperscript{2}, 24.5\%, 1000 W/m\textsuperscript{2} \\
+\midrule
+\textbf{Net draw from battery} & \textbf{352} & $-$ & Gross propulsion -- solar \\
+\textbf{Net power balance (full sun)} & \textbf{+95 W saving} & -- & Power demand reduced \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+%---------------------------------------------------------------
+\section{Environmental and Survivability Specifications}
+%---------------------------------------------------------------
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{figures/fig_5_6_env_envelope.png}
+  \caption{Operational Environmental Envelope -- Temperature / Altitude / Wind}
+  \label{fig:envenvelope}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Environmental Operating Specifications}
+\begin{tabularx}{\textwidth}{L{5cm} C{3.2cm} C{1.5cm} X}
+\toprule
+\textbf{Parameter} &
+\textbf{Value} &
+\textbf{Unit} &
+\textbf{Notes} \\
+\midrule
+Operating Temperature (air)   & $-10$ to $+55$    & \textdegree C & Avionics thermally managed \\
+Storage Temperature           & $-20$ to $+60$    & \textdegree C & Battery at 50\% SoC \\
+Operating Humidity (RH)       & 10--95            & \%            & Non-condensing \\
+IP Rating (avionics bay)      & IP54              & --            & IEC 60529; dust + splash proof \\
+Maximum Hover Wind Speed      & 10.7 (Bft 5)      & m/s           & Yaw authority maintained \\
+Maximum Cruise Wind Speed     & 13.8 (Bft 6)      & m/s           & Heading-hold capable \\
+Maximum Gust (operational)    & 7                 & m/s           & Instantaneous vertical gust \\
+Maximum Operating Altitude    & 3000              & m ASL         & De-rated power above 2000 m \\
+Vibration (IEC 60068-2-6)     & 5--500 Hz, 2 G    & --            & Avionics bay isolation required \\
+Shock (IEC 60068-2-27)        & 20 G, 11 ms, half-sine & --      & Hard landing simulation \\
+Solar Irradiance (design)     & 800--1200         & W/m\textsuperscript{2} & Standard daylight ops \\
+Salt Mist (avionics bay)      & 48 h, 5\% NaCl   & --            & per IEC 60068-2-52 Kb \\
+Sand / Dust (ingress)         & $\leq$5 mg/m\textsuperscript{3} & -- & IP5X outer surfaces \\
+UV Exposure (materials limit) & Class F (IEC 61215) & --          & ETFE and matte topcoat \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Vibration and Acoustic Emissions}
+
+\begin{table}[H]
+\centering
+\caption{Vibration and Noise Specifications}
+\begin{tabularx}{\textwidth}{L{5cm} C{3.2cm} C{1.5cm} X}
+\toprule
+\textbf{Parameter} &
+\textbf{Value} &
+\textbf{Unit} &
+\textbf{Notes} \\
+\midrule
+Front rotor fundamental (hover) & $\sim$45     & Hz     & $\approx$2700 RPM $\div$ 60 \\
+Rear rotor fundamental (hover)  & $\sim$18     & Hz     & $\approx$1080 RPM $\div$ 60 \\
+IMU isolation mount resonance   & $<$10        & Hz     & Gel-mount isolator target \\
+Airframe first bending mode     & $>$30        & Hz     & FEA result -- wing \\
+Acoustic noise level (15 m away) & $\leq$72   & dB(A)  & Design target, hover \\
+Propeller tip speed             & $\leq$0.6 Mach & --   & Avoids compressibility noise \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+%---------------------------------------------------------------
+\section{Avionics, Software, and Interface Specifications}
+%---------------------------------------------------------------
+
+\subsection{Flight Controller and Sensor Suite}
+
+\begin{table}[H]
+\centering
+\caption{Avionics Hardware Specifications}
+\begin{tabularx}{\textwidth}{L{4cm} L{4cm} X}
+\toprule
+\textbf{Component} &
+\textbf{Selected Part} &
+\textbf{Key Specification} \\
+\midrule
+Flight Controller      & Cube Orange+   & STM32H757 dual-core, triple-redundant IMU, 204 MHz \\
+IMU (primary)          & ICM-42688-P    & $\pm$16 g, $\pm$2000 \textdegree/s; vibration isolation mount \\
+IMU (secondary)        & ICM-20649      & Triple-redundant failover \\
+Barometer              & MS5611         & Resolution: 10 cm altitude \\
+GPS / GNSS             & u-Blox F9P     & RTK capable; 1 cm position accuracy; GPS+GLONASS+BeiDou \\
+Magnetometer           & RM3100         & External, mounted on GPS mast \\
+Airspeed Sensor        & DLVR-L10D      & Differential pressure; range 0--30 m/s \\
+RC Receiver            & ExpressLRS 2.4 GHz & $<$1 ms latency; 868/915 MHz backup \\
+Telemetry Radio        & SiK 915 MHz    & 500 mW; 40 km LOS range \\
+Ground Control Station & QGroundControl (PX4) & Mission planning, log review \\
+Flight Software        & PX4 Autopilot v1.15 & Custom VTOL tilt-rotor mixer \\
+Optical Flow (optional) & PX4FLOW       & Indoor / GPS-denied hover stabilisation \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Communication and Interface Standards}
+
+\begin{table}[H]
+\centering
+\caption{Data Interfaces and Communication Protocols}
+\begin{tabularx}{\textwidth}{L{4cm} C{2.5cm} C{2cm} X}
+\toprule
+\textbf{Interface} &
+\textbf{Protocol} &
+\textbf{Baud / Rate} &
+\textbf{Notes} \\
+\midrule
+FC $\leftrightarrow$ ESC     & DShot600 (digital PWM) & 600 kHz  & Bidirectional telemetry \\
+FC $\leftrightarrow$ GPS     & UART                   & 921.6 kbps & 8N1, 3.3 V logic \\
+FC $\leftrightarrow$ telemetry & UART / MAVLink v2    & 57.6 kbps  & Heartbeat + mission data \\
+FC $\leftrightarrow$ RC Rx   & CRSF / SBUS            & 420 kbps   & ELRS CRSF preferred \\
+FC $\leftrightarrow$ companion & UART / USB-C         & 921.6 kbps & RPi / Jetson integration port \\
+Ground station $\leftrightarrow$ UAV & MAVLink v2 / UDP & 56 kbps & Encrypted AES-128 \\
+Servo (tilt actuator) & PWM / UART              & 50--333 Hz   & Digital HV servo bus \\
+MPPT $\leftrightarrow$ FC    & I\textsuperscript{2}C / CAN & 400 kHz & Power telemetry \\
+ESC telemetry output  & Bidirectional DShot     & 600 kHz      & RPM, current, temp to FC \\
+Payload interface     & CAN / RS-232            & 1 Mbps       & Cargo release trigger \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Software Architecture and Control Law Specifications}
+
+The flight control architecture is built upon PX4 Autopilot, customised for the Solift three-axis tilt-rotor configuration. The following control law requirements must be met:
+
+\begin{table}[H]
+\centering
+\caption{Control Law Performance Requirements}
+\begin{tabularx}{\textwidth}{L{5cm} C{3cm} C{1.5cm} X}
+\toprule
+\textbf{Parameter} &
+\textbf{Requirement} &
+\textbf{Unit} &
+\textbf{Test Method} \\
+\midrule
+Attitude control loop rate     & $\geq$400        & Hz   & Software tick counter \\
+Position hold accuracy (GPS)   & $\leq$1.5        & m    & 3D RMS, calm wind \\
+Altitude hold accuracy         & $\leq$0.5        & m    & Barometric + GPS fusion \\
+Tilt servo command latency     & $\leq$10         & ms   & FC output to servo response \\
+Transition stability margin    & $\geq$3 dB       & dB   & Bode plot, open-loop \\
+Failsafe trigger (RC loss)     & $\leq$1          & s    & Returns to home at 50 m altitude \\
+Geofencing compliance          & EUROCAE ED-269   & --   & GPS boundary enforcement \\
+Data logging rate (IMU)        & 1000             & Hz   & SD card, 32 GB minimum \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+%---------------------------------------------------------------
+\section{Safety, Regulatory, and Compliance Specifications}
+%---------------------------------------------------------------
+
+\subsection{Failure Mode Summary}
+
+\begin{table}[H]
+\centering
+\caption{Failure Mode and Effect Summary (FMEA -- Critical Items)}
+\begin{tabularx}{\textwidth}{L{3cm} L{3cm} C{1.2cm} C{1.2cm} C{1.2cm} X}
+\toprule
+\textbf{Failure Mode} &
+\textbf{Effect} &
+\textbf{S} &
+\textbf{O} &
+\textbf{D} &
+\textbf{Mitigation} \\
+\midrule
+Single front motor failure (hover) & Yaw uncontrollable & 8 & 2 & 7 & Rear motor compensates; emergency land protocol \\
+Tilt servo jam (mid-transition) & Locked in intermediate angle & 7 & 3 & 5 & Dual servo per nacelle; return-to-home \\
+Battery connector disconnect & Total power loss & 10 & 1 & 8 & Locked XT90S; strain relief \\
+GPS signal loss & Position hold degraded & 5 & 3 & 4 & Optical flow backup; altitude-hold via baro \\
+Solar panel delamination & Power harvest reduced & 3 & 2 & 7 & Structural bond test; peel-strength $>$50 N/cm \\
+RC link loss & Loss of manual control & 6 & 2 & 3 & Failsafe RTH within 1 s \\
+ESC over-temperature & Motor de-rating / shutdown & 7 & 3 & 4 & Thermal monitoring; motor power-sharing \\
+Pivot shaft fracture & Nacelle detachment & 10 & 1 & 6 & FEA-verified with SF=1.5; TC4 titanium option \\
+\bottomrule
+\multicolumn{6}{l}{\small S = Severity (1--10), O = Occurrence (1--10), D = Detectability (1--10). RPN = S$\times$O$\times$D.} \\
+\end{tabularx}
+\end{table}
+
+\subsection{Regulatory Compliance Matrix}
+
+\begin{table}[htbp]
+\centering
+\caption{Regulatory and Standards Compliance Matrix}
+\small
+\begin{tabularx}{\textwidth}{L{3.5cm} C{2cm} C{2cm} X}
+\toprule
+\textbf{Requirement / Standard} &
+\textbf{Applicable} &
+\textbf{Status} &
+\textbf{Notes} \\
+\midrule
+MTOW $<$ 25 kg (CAAC category)    & \checkmark & Target   & Enables BVLOS waiver application \\
+Geo-caging (EUROCAE ED-269)       & \checkmark & Design   & GPS-enforced; $\pm$5 m boundary \\
+Remote ID (FAA/CAAC)              & \checkmark & Design   & UAS ID broadcast via 1090 MHz \\
+Battery transport (UN 38.3)       & \checkmark & Design   & Wh limit 100 Wh/cell; carry-case \\
+IEC 62368-1 (electrical safety)   & \checkmark & Design   & LV directive compliance \\
+CE marking (EU UAS category A3)   & \checkmark & Target   & For EU operational approval \\
+ISO 9001:2015 (DFM process)       & \checkmark & Design   & Quality management alignment \\
+ASTM F3322 (small UAS propulsion) & \checkmark & Design   & Thrust test standard \\
+MIL-A-8625F (hard anodise)        & \checkmark & Material & Type III, 25 \textmu m min \\
+RTCA DO-160G (env.\ testing)      & Partial    & Target   & Vibration and temperature sections \\
+\bottomrule
+\multicolumn{4}{l}{\small \checkmark = Applicable and planned. ``Target'' = compliance demonstration required before operational approval.} \\
+\end{tabularx}
+\end{table}
+
+\subsection{Safety-Critical Design Requirements}
+
+The following design requirements are classified as \textbf{safety-critical} and may not be waived without formal engineering authority approval:
+
+\begin{enumerate}[noitemsep]
+  \item \textbf{SR-01:} All propulsion motors must maintain independent power paths. No single wiring failure shall disable more than one motor.
+  \item \textbf{SR-02:} The battery management system (BMS) shall interrupt power within 50 ms of detecting cell voltage below 3.3 V or cell temperature above 75\textdegree C.
+  \item \textbf{SR-03:} The tilt mechanism pivot shaft shall be designed with a structural safety factor $\geq$ 1.5 against ultimate load under worst-case transition phase gyroscopic loading (verified by FEA).
+  \item \textbf{SR-04:} A geofence enforced at firmware level shall prevent flight beyond pre-loaded boundaries. Fence breach shall trigger immediate RTH.
+  \item \textbf{SR-05:} All structural CFRP--aluminium interfaces shall be galvanically isolated per Section~\ref{sec:corrosion} to prevent stress-corrosion cracking.
+  \item \textbf{SR-06:} The platform shall achieve failsafe RTH within 1 second of RC link loss, confirmed by hardware-in-the-loop (HITL) simulation prior to any flight test.
+\end{enumerate}
+
+%---------------------------------------------------------------
+\section{Summary Specifications Sheet}
+%---------------------------------------------------------------
+
+This section consolidates all top-level specifications for quick reference in the style of an industrial UAS data sheet.
+
+\begin{table}[H]
+\centering
+\caption{Solift H-VTOL -- Quick Reference System Data Sheet (SDS)}
+\begin{tabularx}{\textwidth}{L{5.5cm} X}
+\toprule
+\multicolumn{2}{c}{\textbf{SOLIFT H-VTOL \quad SYSTEM DATA SHEET (SDS)}} \\
+\textbf{Parameter} &
+\textbf{Specification} \\
+\midrule
+\multicolumn{2}{l}{\textbf{Physical}} \\
+Wingspan & 3050 mm \\
+Fuselage Length & 1620 mm \\
+MTOW & 12.0 kg \\
+Operating Empty Weight & 7.0 kg \\
+Maximum Payload & 5.0 kg \\
+Cargo Bay (internal) & 500 $\times$ 300 $\times$ 200 mm \\
+\midrule
+\multicolumn{2}{l}{\textbf{Propulsion}} \\
+Front Motors ($\times$2) & Sunnysky X4112S, 340 KV, 1500 W cont. \\
+Rear Motor ($\times$1) & T-Motor U8 class, $\approx$85 KV, 2200 W cont. \\
+System Bus Voltage & 44.4 V (12S Nominal) \\
+ESC & 12S 80A HV, FOC, DShot600 \\
+Propellers & 22$\times$6.6'' (front), 28$\times$9.2'' folding (rear), CFRP \\
+\midrule
+\multicolumn{2}{l}{\textbf{Energy}} \\
+Main Battery & 12S 22,000 mAh Si-anode LiPo, 976 Wh \\
+Solar Area & 0.95 m\textsuperscript{2} IBC cells, 24.5\% efficiency, ETFE encap. \\
+Peak Solar Power & $\approx$232 W (STC: 1000 W/m\textsuperscript{2}, 25\textdegree C) \\
+\midrule
+\multicolumn{2}{l}{\textbf{Performance}} \\
+Cruise Speed & 65 km/h (18 m/s) \\
+Maximum Speed & $\leq$120 km/h \\
+Maximum Range (solar-assisted, 5 kg) & $\geq$120 km \\
+Max Wind (hover / cruise) & 10.7 m/s (Bft 5) / 13.8 m/s (Bft 6) \\
+Service Ceiling & 3000 m ASL \\
+\midrule
+\multicolumn{2}{l}{\textbf{Environmental}} \\
+Operating Temperature & $-10$\textdegree C to $+55$\textdegree C \\
+Protection Rating & IP54 (avionics bay) \\
+\midrule
+\multicolumn{2}{l}{\textbf{Avionics}} \\
+Flight Controller & Cube Orange+ / PX4 v1.15 \\
+GNSS & u-Blox F9P (RTK, 1 cm) \\
+Data Link & SiK 915 MHz / ELRS 2.4 GHz \\
+\midrule
+\multicolumn{2}{l}{\textbf{Key Materials}} \\
+Airframe & Prepreg CFRP / Nomex honeycomb \\
+Tilt Mechanism & Al 7075-T6, Type III hard anodised \\
+Fasteners & TC4 (Ti-6Al-4V) titanium \\
+Solar Encapsulation & ETFE fluoropolymer film, transmittance $>$95\% \\
+\midrule
+\multicolumn{2}{l}{\textbf{Compliance}} \\
+Design Standards & ISO 2768, ASTM B209, MIL-A-8625F, IEC 61215 \\
+Regulatory Target & CAAC BVLOS category; EUROCAE ED-269; Remote ID \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+%---------------------------------------------------------------
+\section{Image and Figure Requirements}
+%---------------------------------------------------------------
+
+The following table summarises all figures that must be produced from CAD/simulation tools and inserted in place of the placeholder boxes throughout this chapter.
+
+\begin{table}[H]
+\centering
+\caption{Required Figures for Chapter 5 -- Source and Description}
+\begin{tabularx}{\textwidth}{C{1.2cm} L{3cm} L{3.2cm} X}
+\toprule
+\textbf{Fig.} &
+\textbf{Caption} &
+\textbf{Filename} &
+\textbf{How to Produce} \\
+\midrule
+5.1 & Three-view orthographic drawing & \texttt{fig\_5\_1\_three\_view.png} & SolidWorks: Drawing mode, 3-view template, all principal dimensions \\
+5.2 & Solar PV array layout (top view) & \texttt{fig\_5\_2\_solar\_layout.png} & SolidWorks top view + annotate panel zones in Inkscape / PowerPoint \\
+5.3 & Material radar chart & \texttt{fig\_5\_3\_material\_radar.png} & Excel / Python Matplotlib spider chart: 5 axes (strength, stiffness, cost, machinability, corrosion) \\
+5.4 & Tilt mechanism exploded view & \texttt{fig\_5\_4\_tilt\_exploded.png} & SolidWorks: Exploded View + Smart Dimension callouts on pivot shaft \\
+5.5 & FEA stress contour (tilt pivot) & \texttt{fig\_5\_5\_fea\_stress.png} & ANSYS Static Structural: von Mises stress, worst-case transition load \\
+5.6 & Environmental envelope diagram & \texttt{fig\_5\_6\_env\_envelope.png} & Python Matplotlib or Excel: Temp vs.\ Altitude region + wind rose \\
+5.7 & Avionics block diagram & \texttt{fig\_5\_7\_avionics\_block.png} & Draw.io or Visio: FC, ESC, GPS, RC, telemetry, BMS interconnects \\
+5.8 & Power flow diagram & \texttt{fig\_5\_8\_power\_flow.png} & Draw.io: Battery $\to$ ESC $\to$ motors; Solar $\to$ MPPT $\to$ bus \\
+\bottomrule
+\end{tabularx}
+\end{table}

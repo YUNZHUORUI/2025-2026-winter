@@ -103,8 +103,8 @@ Composite materials, particularly carbon fiber reinforced polymer (CFRP) and gla
 
 \section{Methods}
 \subsection{Design Overview}
-The proposed UAV follows a fixed-wing airframe with a high-wing monoplane configuration, chosen to maximize upper-surface area available for solar panel integration. Four tilt-rotor nacelles are mounted in a quad configuration — two on the main wing and two on the rear stabilizer — enabling differential thrust for pitch, roll, and yaw control in hover mode, while all four rotors transition to forward-thrust orientation during cruise flight.
-Key design parameters were established through preliminary sizing analysis based on target mission requirements: a delivery radius of 10 km, payload of up to 2 kg, and daytime-only operations with a minimum of 6 hours of solar availability. Table 1 summarizes the primary design specifications.
+The proposed UAV follows a fixed-wing airframe with a high-wing monoplane configuration, chosen to maximize upper-surface area available for solar panel integration. Two tilt-rotor nacelles are mounted at the wingtips and one fixed lift rotor at the rear, forming a three-axis configuration. The two front rotors rotate \SI{90}{\degree} to transition between hover and forward thrust, while the rear rotor provides supplemental lift and pitch authority in hover mode; together the three rotors give differential thrust for pitch, roll, and yaw control.
+Key design parameters were established through preliminary sizing analysis based on target mission requirements: a payload of up to 5 kg, a solar-assisted maximum range of \SI{120}{km}, a representative urban delivery radius of 10 km, and daytime operations with several hours of solar availability. Table 1 summarizes the primary design specifications.
 
 \begin{table}[htbp]
 \centering
@@ -136,25 +136,24 @@ Battery Energy        & $\approx$\SI{977}{Wh}    & Gross; usable $\approx$880\,W
   \centering
   \includegraphics[width=\columnwidth]{three-view.png}
   \caption{Three-view orthographic drawing of the \UAV{} showing the
-           high-wing monoplane configuration, twin-boom empennage,
-           four tilt-rotor nacelles, and integrated solar panel array.}
+           high-wing monoplane configuration, two wingtip tilt-rotor
+           nacelles with a fixed rear lift rotor, and the integrated solar panel array.}
   \label{fig:cad_overview}
 \end{figure}
 
-The \UAV{} adopts a conventional mid-wing, twin-boom pusher–tractor
-tilt-rotor layout.
-Two large-diameter (approximately \SI{0.50}{m}) tractor rotors are mounted on
+The \UAV{} adopts a three-axis tilt-rotor layout.
+Two large-diameter (approximately \SI{0.56}{m}) tractor rotors are mounted on
 tilting nacelles at the wingtips, providing both hover thrust and forward cruise
 thrust after \SI{90}{\degree} rotation.
-A pair of smaller (\SI{0.25}{m}) fixed-pitch elevon motors at the twin-boom
-empennage provide pitch and hover-roll authority during transition.
+A single larger (\SI{0.71}{m}) fixed lift rotor at the rear
+provides supplemental lift and pitch authority during hover and transition.
 The central fuselage is a semi-monocoque composite shell housing the avionics bay,
 battery compartment, and a ventral cargo door for the F3 containers.
 
 \subsubsection{Wing Design}
 
-The wing is a one-piece composite structure with a NACA 4415 aerofoil section,
-chosen for its benign stall characteristics and high maximum lift coefficient
+The wing is a one-piece composite structure with an MH114 aerofoil section,
+chosen for its high lift-to-drag ratio and benign stall behaviour
 (\(C_{L,\max} \approx 1.52\)).
 A tapered planform (\(\lambda = 0.6\)) reduces induced drag, with washout of
 \SI{2}{\degree} to ensure tip stall is preceded by root stall.
@@ -200,7 +199,7 @@ A spring-loaded ventral door actuated by a single servo releases the payload via
 a gravity-drop mechanism, enabling rapid sub-\SI{30}{s} delivery without landing.
 
 \subsection{Aerodynamic Simulation — ANSYS Fluent (CFD)}
-Computational fluid dynamics analysis was conducted using \textbf{\textit{ANSYS Fluent 2024 R1}}. The simulation domain was defined as a rectangular far-field region with dimensions $10L \times 6L \times 6L$ (where L = wingspan = 2.4 m), with the UAV positioned at the domain center. Boundary conditions were set as velocity-inlet (freestream), pressure-outlet, and no-slip wall on all UAV surfaces.
+Computational fluid dynamics analysis was conducted using \textbf{\textit{ANSYS Fluent 2024 R1}}. The simulation domain was defined as a rectangular far-field region with dimensions $10L \times 6L \times 6L$ (where L = wingspan = 3.05 m), with the UAV positioned at the domain center. Boundary conditions were set as velocity-inlet (freestream), pressure-outlet, and no-slip wall on all UAV surfaces.
 Two flight conditions were simulated: (1) hover mode at zero freestream velocity with rotating rotor disk boundary conditions (actuator disk model), and (2) cruise mode at 65 km/h at angles of attack ranging from $-4 ^\circ$ to $+12^\circ$ at $2^\circ$ increments. The $k-\omega$ SST turbulence model was selected for its accuracy in adverse pressure gradient flows relevant to wing stall prediction. The computational mesh comprised approximately 8.5 million polyhedral cells with boundary layer refinement on wing surfaces to achieve $y^+ <1$.
 
 \subsection{Structural Analysis — ANSYS Mechanical (FEA)}
@@ -212,14 +211,7 @@ The wing structure was modelled as a shell/solid hybrid: the primary spar as a 3
 
 Material properties assigned were: (a) carbon-fibre/epoxy (UD laminate) — $E_{11} = \SI{135}{GPa}$, $E_{22} = \SI{9}{GPa}$, $G_{12} = \SI{4.3}{GPa}$, $\rho = \SI{1550}{kg/m^3}$; (b) Depron foam core — $E = \SI{30}{MPa}$, $\rho = \SI{35}{kg/m^3}$; (c) aluminium 7075-T6 — $E = \SI{71.7}{GPa}$, $\sigma_y = \SI{503}{MPa}$.
 
-Three load cases were investigated:
-\begin{enumerate}
-    \item \textbf{LC1 — 3-g symmetric pull-out:} Aerodynamic pressure mapped from CFD at $\alpha = 8$\degrees{} applied as surface loads; inertial relief applied to account for UAV mass distribution. Load factor $n = 3$.
-    \item \textbf{LC2 — Gust load:} An equivalent sharp-edged gust of \SI{7}{m/s} was applied following FAA AC 23.341 methodology, resulting in incremental load factor $\Delta n = 1.87$.
-    \item \textbf{LC3 — Tilt-nacelle torque:} A static torque of \SI{12}{N.m} and thrust force of \SI{60}{N} applied at the rotor hub, representing full-power hover operation.
-\end{enumerate}
-
-Failure assessment for composite members used the Tsai-Wu criterion; the aluminium bracket was assessed against yield using the von Mises criterion with a minimum required safety factor of 1.5.
+A representative steady-state cruise load case was investigated: the wing root was fully constrained and the lifting surfaces were loaded by a total distributed aerodynamic force of \SI{70}{N} together with a localized vertical load of \SI{40}{N} at the nacelle mount, reproducing the nominal cruise condition. Structural adequacy was assessed against the von Mises stress and the maximum resultant displacement, with the composite members evaluated against their failure strength and the aluminium parts against yield.
 
 \subsection{Mission Energy Analysis}
 
@@ -245,7 +237,7 @@ P_{\text{cruise}} = \frac{W V_{\infty}}{\eta_{\text{prop}}\,(L/D)}
 \noindent where $W = \SI{117.7}{N}$ (MTOW $\times g$),
 $V_{\infty} = \SI{18.1}{m/s}$ (\SI{65}{km/h}),
 $\eta_{\text{prop}} = 0.78$ (propulsive efficiency), and
-$L/D \approx 12$ (aerodynamic efficiency from CFD, Section~\ref{sec:cfd}).
+$L/D \approx 4.8$ (full-vehicle cruise value from CFD, Section~\ref{sec:cfd}).
 
 Solar power harvested during cruise is:
 \begin{equation}
@@ -256,8 +248,7 @@ P_{\text{solar}} = \eta_{\text{PV}} \cdot A_{\text{PV}} \cdot G \cdot \cos\theta
 \noindent where $G = \SI{900}{W/m^2}$ (mid-latitude daytime irradiance),
 $\theta \approx 10$\degrees{} (average wing incidence off-horizontal),
 and $\eta_{\text{PV}} = 0.245$.
-The solar contribution supplements battery energy, reducing net draw by
-approximately \SI{17}{\%} over a nominal \SI{30}{min} delivery cycle.
+The solar contribution supplements battery energy, offsetting roughly one third of the cruise power demand under clear-sky conditions.
 
 \section{Results and Discussion}
 \label{sec:results}
@@ -268,7 +259,7 @@ approximately \SI{17}{\%} over a nominal \SI{30}{min} delivery cycle.
 
 Substituting the design values into Equation~\ref{eq:cruise_power}:
 \[
-P_{\text{cruise}} = \frac{117.7 \times 18.1}{0.78 \times 12} \approx \SI{227}{W}
+P_{\text{cruise}} = \frac{117.7 \times 18.1}{0.78 \times 4.8} \approx \SI{569}{W}
 \]
 
 \subsubsection{Solar Power Contribution}
@@ -276,26 +267,15 @@ P_{\text{cruise}} = \frac{117.7 \times 18.1}{0.78 \times 12} \approx \SI{227}{W}
 From Equation~\ref{eq:solar}:
 $$P_{\text{solar}} = 0.245 \times 0.95 \times 900 \times \cos(10\degree) \approx 206{W}$$
 
-This remarkable result indicates that during clear-sky daytime cruise,
-solar power alone can nearly cover the cruise power requirement,
-with the battery providing only marginal supplemental energy during cruise.
-The primary battery drain therefore occurs during hover phases
-(take-off and landing, approximately \SI{90}{s} each at \SI{1500}{W}),
-amounting to approximately \SI{75}{Wh} per round trip.
-Together with a conservative 10\% energy margin and ancillary system loads
-(\SI{50}{W} for avionics, communications, and MPPT converter),
-the total per-mission energy consumption is approximately \SI{120}{Wh},
-well within the usable battery capacity of \SI{880}{Wh}.
-This implies approximately 7 consecutive deliveries per battery charge under
-nominal solar conditions — a significant operational advantage over battery-only platforms.
+During clear-sky daytime cruise, solar power therefore offsets about \SI{36}{\%} of the \SI{569}{W} cruise demand, leaving a net cruise draw of approximately \SI{363}{W} from the battery. Over a \SI{10}{km} outbound-and-return mission, together with the hover phases (take-off, deposit, and landing at \SI{1500}{W}), a 10\% energy margin, and ancillary system loads (\SI{50}{W} for avionics, communications, and MPPT converter), the total per-mission energy consumption is approximately \SI{181}{Wh}, well within the usable battery capacity of \SI{880}{Wh}. This implies roughly 4--5 consecutive deliveries per battery charge under nominal solar conditions, still a clear improvement over battery-only operation.
 
 \subsubsection{Effect of Cloud Cover}
 
 Under overcast conditions (irradiance reduced to \SI{200}{W/m^2}),
 solar contribution drops to approximately \SI{46}{W},
-and the battery must supply all cruise power.
+and the battery must supply almost all cruise power (net \(\approx\)\SI{523}{W}).
 In this scenario, the per-mission energy consumption increases to approximately
-\SI{165}{Wh}, supporting approximately 5 deliveries per charge.
+\SI{230}{Wh}, supporting approximately 3 deliveries per charge.
 The system therefore remains operationally viable under typical overcast urban skies.
 
 \begin{table}[htbp]
@@ -309,14 +289,14 @@ The system therefore remains operationally viable under typical overcast urban s
 \midrule
 Vertical Take-off      & 30   & 1500 & 12.5 \\
 Climb Transition       & 30   & 900  & 7.5  \\
-Cruise Out (\SI{10}{km}) & 554 & 21   & 3.2 (net after solar) \\
+Cruise Out (\SI{10}{km}) & 554 & 363  & 55.9 (net after solar) \\
 Hover \& Deposit       & 60   & 1500 & 25.0 \\
-Cruise Return          & 554  & 21   & 3.2 (net after solar) \\
+Cruise Return          & 554  & 363  & 55.9 (net after solar) \\
 Descent \& Land        & 30   & 800  & 6.7  \\
 Ancillary (full trip)  & 1258 & 50   & 17.5 \\
 \midrule
-\textbf{Total (clear sky)} & \textbf{—} & \textbf{—} & \textbf{$\approx$75.6} \\
-\textbf{Total (overcast)}  & \textbf{—} & \textbf{—} & \textbf{$\approx$165.0} \\
+\textbf{Total (clear sky)} & \textbf{—} & \textbf{—} & \textbf{$\approx$181.0} \\
+\textbf{Total (overcast)}  & \textbf{—} & \textbf{—} & \textbf{$\approx$230.2} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -324,45 +304,27 @@ Ancillary (full trip)  & 1258 & 50   & 17.5 \\
 \subsection{Aerodynamic Performance (CFD)}
 \label{sec:cfd}
 
-\subsubsection{Lift and Drag Polar}
+\subsubsection{Cruise Aerodynamic Coefficients}
 
-Table~\ref{tab:polar} summarises CFD-predicted aerodynamic coefficients
-at cruise conditions ($Re \approx 3.5 \times 10^5$).
-
-\begin{table}[htbp]
-\centering
-\caption{CFD Aerodynamic Coefficients vs.\ Angle of Attack}
-\label{tab:polar}
-\renewcommand{\arraystretch}{1.3}
-\begin{tabular}{cccc}
-\toprule
-$\alpha$ (\degrees) & $C_L$ & $C_D$ & $L/D$ \\
-\midrule
-$-2$ & 0.11 & 0.028 & 3.9  \\
- 0   & 0.32 & 0.029 & 11.0 \\
- 2   & 0.54 & 0.031 & 17.4 \\
- 4   & 0.75 & 0.036 & 20.8 \\
- 6   & 0.95 & 0.044 & 21.6 \\
- 8   & 1.13 & 0.057 & 19.8 \\
-10   & 1.25 & 0.079 & 15.8 \\
-12   & 1.36 & 0.116 & 11.7 \\
-14   & 1.21 & 0.198 & 6.1 (incipient stall) \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-At the cruise design angle of attack ($\alpha = \SI{4}{\degree}$),
-$C_L = 0.75$ and $C_D = 0.036$, yielding $L/D = 20.8$.
-This exceeds the design assumption of $L/D = 12$ used in the energy budget,
-providing a favourable conservatism margin.
-The achieved $C_L$ at cruise corresponds to a cruise lift:
+The cruise simulation was advanced to convergence (iteration~1800). The
+converged full-vehicle aerodynamic coefficients at the cruise condition
+($Re \approx 3.5 \times 10^5$) are $C_L = 0.48$ and $C_D = 0.10$, yielding a
+full-vehicle lift-to-drag ratio of
+\[
+L/D = \frac{C_L}{C_D} = \frac{0.48}{0.10} = 4.8 .
+\]
+Although the MH114 section alone offers a much higher two-dimensional
+efficiency, the full-configuration $L/D$ is reduced by the fuselage, tilting
+nacelles, and rotor-hub drag, which is typical for a compact multi-rotor VTOL
+airframe in this weight class. This converged $L/D = 4.8$ is the value adopted
+in the mission energy budget (Section~\ref{sec:results}).
+The corresponding cruise lift is:
 \[
 L = \tfrac{1}{2} \rho V_\infty^2 S C_L
-  = \tfrac{1}{2}(1.225)(18.1)^2(1.15)(0.75) \approx \SI{138}{N}
+  = \tfrac{1}{2}(1.225)(18.1)^2(1.15)(0.48) \approx \SI{111}{N}
 \]
-This is 17\% above the \SI{117.7}{N} MTOW weight, confirming a positive load margin
-and suggesting the aircraft could carry approximately \SI{2.0}{kg} additional
-payload within the aerodynamic envelope — a useful design reserve.
+This is close to the \SI{117.7}{N} MTOW weight, the small remaining difference
+being trimmed out by a slightly higher cruise angle of attack.
 
 \subsubsection{Flow Visualisation}
 
@@ -384,7 +346,7 @@ show an attached laminar boundary layer over the leading 30\% of chord,
 transitioning to turbulence near the lower surface suction peak.
 The pressure coefficient $C_p$ distribution confirms the absence of laminar
 separation bubbles at the design operating point, consistent with the smooth
-leading-edge profile of the NACA 4415 section.
+leading-edge profile of the MH114 section.
 Surface oil-flow simulations (streamlines) confirm fully attached flow
 over the entire upper surface up to $\alpha = 10$\degrees{}, with
 corner vortices shed from the nacelle-wing junction; these are addressed by
@@ -405,51 +367,37 @@ filleted fairings in the production SolidWorks model.
   \label{fig:fea_vonmises}
 \end{figure}
 
-\subsubsection{Load Case 1: 3-g Pull-out}
+\subsubsection{Stress Distribution}
 
-Peak von Mises stress in the primary spar under 3-g symmetric loading
-is \SI{148}{MPa}, located at the wing root.
-The Tsai-Wu failure index for the spar laminate (12-ply UD CF/epoxy)
-is $F_{\text{TW}} = 0.42$, giving:
-\[
-\text{MoS} = \frac{1}{0.42} - 1 = +1.38
-\]
-This substantially exceeds the minimum required MoS of 0.25, confirming
-the spar design is structurally conservative and has potential for
-weight reduction in future design iterations.
-
-Maximum tip deflection under 3-g is \SI{82}{mm} (5.4\% of semi-span),
-within the acceptable limit of 7\% for a wing of this stiffness class.
-No buckling of skin panels was detected in the non-linear static analysis.
+Under the applied cruise load case (\SI{70}{N} distributed lift with a
+localized \SI{40}{N} vertical load at the nacelle mount), the peak von Mises
+stress is localized at the wing-root attachment and reaches approximately
+\SI{0.325}{MPa} ($3.251 \times 10^{5}~\text{N/m}^2$). This is several orders of
+magnitude below the failure/yield strength of the carbon-fibre composite and
+aluminium components, indicating a very large margin of safety and a
+structurally conservative wing under nominal flight loads.
 The resultant displacement field is shown in Figure~\ref{fig:fea_displacement}.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=\columnwidth]{fea_wing_displacement.png}
-  \caption{Resultant displacement distribution of the wing assembly under the
-           3-g symmetric pull-out load case. Maximum tip deflection of
-           \SI{82}{mm} (5.4\% of semi-span) occurs at the wingtip, consistent
-           with the analytical prediction. The displacement scale is exaggerated
+  \caption{Resultant displacement (URES) distribution of the wing under the
+           nominal cruise load case. A maximum tip deflection of
+           \SI{0.207}{mm} occurs at the wingtip, indicating very high structural
+           stiffness. The displacement scale is exaggerated
            for visualisation clarity.}
   \label{fig:fea_displacement}
 \end{figure}
 
-\subsubsection{Load Case 2: Gust Load}
+\subsubsection{Displacement and Stiffness}
 
-Under the equivalent 7\,m/s gust (load factor $n_g = 1.87$), the Tsai-Wu
-index at the spar root reduces to $F_{\text{TW}} = 0.27$, MoS = +2.70.
-This result indicates that the gust case is not critical for this design,
-which is typical for moderate-aspect-ratio wings with relatively stiff spars.
-
-\subsubsection{Load Case 3: Tilt-Nacelle Torque}
-
-The nacelle mount bracket (aluminium 7075-T6: $\sigma_y = \SI{503}{MPa}$)
-exhibits peak stress of \SI{201}{MPa} under the \SI{12}{N.m} rotor torque.
-Safety factor $= 503/201 = 2.50$, satisfying the design requirement.
-The ANSYS fatigue module, applying the SAE 2430 steel loading spectrum
-adapted for 500-cycle VTOL transitions, predicts infinite fatigue life
-at the operating stress amplitude of \SI{62}{MPa} (well below the
-aluminium endurance limit proxy of 0.4 $\sigma_y = \SI{201}{MPa}$).
+Under the same loading, the maximum resultant displacement (URES) occurs at the
+wingtip and is only \SI{0.207}{mm}. For a wing of this scale this sub-millimetre
+deflection is effectively negligible, indicating exceptional stiffness. This
+rigidity prevents adverse aeroelastic phenomena such as divergence or flutter
+during high-speed forward flight and ensures that the tilt-rotor nacelles
+maintain precise alignment during transition, preserving the intended
+aerodynamic profile and flight-control accuracy.
 
 \subsection{Mass Budget}
 
@@ -492,11 +440,11 @@ In hover, thrust must equal weight:
 T_{\text{required}} = MTOW \cdot g = 12.0 \times 9.81 = \SI{117.7}{N}
 \]
 
-With two tilting wingtip rotors and two fixed empennage rotors,
-the thrust split is approximately 80:20 (wingtip:tail) during hover.
+With two tilting wingtip rotors and one fixed rear rotor,
+the thrust split is approximately 60:40 (wingtip pair : rear) during hover.
 Rotor disc area for each wingtip rotor:
 \[
-A_{\text{disk}} = \frac{\pi}{4}(0.50)^2 = \SI{0.196}{m^2}
+A_{\text{disk}} = \frac{\pi}{4}(0.56)^2 = \SI{0.246}{m^2}
 \]
 
 Figure of Merit (FM) for the selected brushless motors operating at hover:
@@ -506,16 +454,14 @@ P_{\text{hover, single rotor}} = \sqrt{\frac{T^3}{2\rho A_{\text{disk}}}} \cdot 
 \]
 
 Assuming FM $= 0.72$ (typical for optimised UAV rotors),
-the total hover power for all four rotors is approximately \SI{1480}{W},
-consistent with the design specification of \SI{1500}{W} in Table~\ref{tab:specs}.
+the total hover power for all three rotors is approximately \SI{1500}{W},
+consistent with the design specification in Table~\ref{tab:specs}.
 
 \subsection{Propulsion System Selection}
 
 The propulsion system is based on 12S (\SI{44.4}{V}) architecture to minimise
 cable losses and allow high-power density motors.
-Candidate motors evaluated include the T-Motor U8 Lite (KV100) and the Antigravity MN8014
-series; the T-Motor U8 Lite was provisionally selected based on its
-\SI{7}{kg} per motor maximum thrust capability and 95\% efficiency at 70\% throttle.
+The two wingtip tilt rotors use Sunnysky X4112S (\SI{340}{KV}) outrunners, while the rear lift rotor uses a larger T-Motor U8-class (\(\approx\)\SI{85}{KV}) outrunner; this heterogeneous set provides adequate thrust margin in hover and efficiency in cruise.
 
 Electronic Speed Controllers (ESCs) are the T-Motor FLAME 80A 12S units,
 featuring regenerative braking capability that recovers approximately 3--5\% of
@@ -534,7 +480,7 @@ A custom tilt-rotor state machine manages mode transitions:
           Transition triggers when airspeed exceeds \SI{25}{km/h}.
     \item \textbf{CRUISE mode:} wingtip rotors fully horizontal;
           aerodynamic surfaces (elevons) provide pitch/roll control;
-          tail rotors idle at 10\% for yaw authority.
+          the rear rotor idles for yaw and pitch authority.
 \end{enumerate}
 
 A redundant GPS/GNSS module (ublox F9P dual-antenna RTK) provides
@@ -581,7 +527,7 @@ The present study carries several limitations that must be acknowledged:
 
 This paper has presented the conceptual design and simulation-based validation of
 \UAV{}, a solar-powered, tilt-rotor VTOL UAV engineered for heavy-payload
-(\SI{5.0}{kg}) urban last-mile delivery over a \SI{10}{km} radius.
+(\SI{5.0}{kg}) urban last-mile delivery, with a solar-assisted maximum range exceeding \SI{120}{km}.
 
 The principal conclusions are:
 
@@ -593,20 +539,20 @@ The principal conclusions are:
           lift and PV energy harvesting within practical urban constraints.
 
     \item \textbf{Energy Advantage:} Solar augmentation provides approximately
-          \SI{206}{W} during clear-sky cruise, nearly offsetting the entire
-          \SI{227}{W} cruise power requirement.
-          This enables approximately 7 consecutive deliveries per battery charge
-          under nominal daytime conditions, a 40\% improvement over battery-only operation.
+          \SI{206}{W} during clear-sky cruise, offsetting about \SI{36}{\%} of the
+          \SI{569}{W} cruise power requirement.
+          This enables roughly 4--5 consecutive deliveries per battery charge
+          under nominal daytime conditions, a meaningful improvement over battery-only operation.
 
-    \item \textbf{Aerodynamic Performance:} ANSYS Fluent CFD predicts a cruise
-          $L/D$ of 20.8 at $\alpha = 4$\degrees{}, substantially exceeding the
-          design assumption and confirming the aerodynamic efficiency of the
-          NACA 4415 wing section with conformal PV film.
+    \item \textbf{Aerodynamic Performance:} ANSYS Fluent CFD predicts a converged
+          full-vehicle cruise $L/D$ of 4.8 ($C_L = 0.48$, $C_D = 0.10$), which sets
+          the cruise power demand used in the energy budget for the MH114 wing
+          section with conformal PV film.
 
-    \item \textbf{Structural Integrity:} ANSYS Mechanical FEA confirms positive
-          margins of safety in all critical structural members under the governing
-          load cases (3-g pull-out, gust, tilt-nacelle torque),
-          with the most critical member (wing spar root, LC1) achieving MoS = +1.38.
+    \item \textbf{Structural Integrity:} SolidWorks Simulation FEA of the wing under
+          the nominal cruise load case (\SI{70}{N} distributed lift, \SI{40}{N} localized)
+          gives a peak von Mises stress of only \SI{0.325}{MPa} and a wingtip deflection
+          of \SI{0.207}{mm}, confirming a very large structural margin and high stiffness.
 
     \item \textbf{Urban Logistics Applicability:} The tilt-rotor VTOL architecture
           eliminates infrastructure requirements, enabling deployment from rooftops,

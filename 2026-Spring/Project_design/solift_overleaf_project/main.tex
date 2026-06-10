@@ -1,0 +1,279 @@
+%===============================================================
+% SOLIFT – Three-Axis Solar-Powered Tilt-Rotor UAV
+% Final Report – Design and Manufacturing Analysis (DFM)
+% Technion – Israel Institute of Technology
+%===============================================================
+\documentclass[12pt,a4paper]{report}
+
+%--- Packages ---------------------------------------------------
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\doublespacing
+\usepackage[T1]{fontenc}        % FIX: was missing braces → {fontenc}
+\usepackage[utf8]{inputenc}     % FIX: was missing braces → {inputenc}
+\usepackage{times}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{siunitx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{tocloft}
+\usepackage{pdfpages}
+\usepackage{listings}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{rotating}
+\usepackage{pdflscape}
+\usepackage{colortbl}
+\usepackage{makecell}
+\usepackage{xltabular}
+\usepackage{seqsplit}
+\usepackage[numbers]{natbib}
+
+%--- Colors -----------------------------------------------------
+\definecolor{technionblue}{RGB}{0,51,102}
+\definecolor{lightgray}{RGB}{240,240,240}
+\definecolor{darkgray}{RGB}{80,80,80}
+
+%--- Hyperref Setup --------------------------------------------
+\hypersetup{
+    colorlinks=true,
+    linkcolor=technionblue,
+    citecolor=technionblue,
+    urlcolor=technionblue,
+    pdftitle={Solift Final Report},
+    pdfauthor={Technion Team},
+}
+
+%--- Header / Footer -------------------------------------------
+% Applied to body pages only; titlepage uses \thispagestyle{empty} automatically.
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textit{Solift -- Three-Axis Solar-Powered Tilt-Rotor UAV}}
+\fancyhead[R]{\small\textit{Final Report}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% Ensure plain pages (chapter openings) also suppress the decorative header
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyfoot[C]{\thepage}%
+  \renewcommand{\headrulewidth}{0pt}%
+}
+
+%--- Chapter / Section Formatting ------------------------------
+\titleformat{\chapter}[block]
+  {\normalfont\Large\bfseries\color{technionblue}}
+  {\thechapter.}{1em}{}
+\titleformat{\section}[block]
+  {\normalfont\large\bfseries}
+  {\thesection}{1em}{}
+\titleformat{\subsection}[block]
+  {\normalfont\normalsize\bfseries}
+  {\thesubsection}{1em}{}
+
+%--- Global Table Row Spacing ----------------------------------
+\renewcommand{\arraystretch}{1.3}
+
+%--- Custom Commands -------------------------------------------
+\newcommand{\para}[1]{\vspace{0.5em}\noindent\textbf{#1}\quad}
+
+%--- FIX: Safe column types that respect \textwidth ------------
+% Use these instead of hard-coded widths in tabularx
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+
+%===============================================================
+\begin{document}
+
+%--- Title Page ------------------------------------------------
+% KEY FIX 1: \begin{titlepage} sets \thispagestyle{empty} automatically in most
+%             classes, but the 'report' class with fancyhdr can override this.
+%             We explicitly call \thispagestyle{empty} inside the environment
+%             AND redefine the plain style above to be safe.
+% KEY FIX 2: Use \vfill strategically (only once, before the footnote) so
+%             LaTeX distributes ALL the whitespace to that single stretch point
+%             instead of spreading it erratically between elements.
+\begin{titlepage}
+\thispagestyle{empty}   % ← suppress header AND footer (incl. page number)
+\centering
+\singlespacing          % ← override \doublespacing for the cover page
+
+% ── Top: Logo + Institution (fixed height, no stretch) ────────
+\vspace*{1.0cm}
+{\includegraphics[width=0.28\textwidth]{figures/technion_logo}\par}
+\vspace{0.6cm}
+{\large\bfseries\color{technionblue}Technion -- Israel Institute of Technology\par}
+\vspace{0.2cm}
+{\small Faculty of Mechanical Engineering\par}
+\vspace{0.1cm}
+{\small Course: Design for Manufacturing (DFM)\par}
+\vspace{0.7cm}
+
+% ── Title block ───────────────────────────────────────────────
+\rule{\linewidth}{1.5pt}\\[0.4cm]
+{\LARGE\bfseries\color{technionblue}
+  Design and Manufacturing Analysis\\[0.25cm]
+  of the Three-Axis Solar-Powered\\[0.25cm]
+  Tilt-Rotor Aircraft\par}
+\vspace{0.3cm}
+{\large\bfseries\color{darkgray}(TECHPLANE001 -- Solift H-VTOL)\par}
+\\[0.4cm]\rule{\linewidth}{1.5pt}
+
+\vspace{0.7cm}
+
+% ── Project info ──────────────────────────────────────────────
+{\normalsize\bfseries Project Title:\par}
+\vspace{0.2cm}
+{\normalsize Solift -- Solar-Powered Heavy-Lift Heterogeneous VTOL Logistics UAV\par}
+
+\vspace{0.8cm}
+
+% ── Group members (two-column name | ID table) ────────────────
+{\normalsize\bfseries Group Members:\par}
+\vspace{0.3cm}
+\begin{tabular}{@{\hspace{1cm}}l@{\hspace{2cm}}l@{\hspace{1cm}}}
+  \textbf{Name}   & \textbf{Student ID} \\[6pt]
+  {[Name 1]}      & {[Student ID]}      \\[4pt]
+  {[Name 2]}      & {[Student ID]}      \\[4pt]
+  {[Name 3]}      & {[Student ID]}      \\[4pt]
+  {[Name 4]}      & {[Student ID]}      \\
+\end{tabular}
+
+\vspace{0.8cm}
+
+% ── Submission date ───────────────────────────────────────────
+{\normalsize\bfseries Submission Date:\par}
+\vspace{0.2cm}
+{\normalsize [Date]\par}
+
+% ── Single \vfill: all remaining whitespace goes HERE ─────────
+\vfill
+
+% ── Footer note (pinned to bottom) ───────────────────────────
+
+\end{titlepage}
+
+%--- Work Distribution -----------------------------------------
+\newpage
+\thispagestyle{plain}
+\chapter*{Work Distribution}
+\addcontentsline{toc}{chapter}{Work Distribution}
+
+% FIX: Replace hard-coded column widths with fractions of \textwidth.
+% The four columns now sum to exactly \textwidth minus \tabcolsep gaps.
+% Using tabularx with X for the responsibilities column handles long text gracefully.
+\begin{table}[H]
+\centering
+\caption{Team Work Distribution}
+\setlength{\tabcolsep}{4pt}          % tighten cell padding slightly
+\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{0.22\textwidth}
+                              |>{\centering\arraybackslash}p{0.13\textwidth}
+                              |>{\raggedright\arraybackslash}X
+                              |>{\centering\arraybackslash}p{0.10\textwidth}|}
+\hline
+\textbf{Member Name} & \textbf{Student ID} & \textbf{Responsibilities} & \textbf{(\%)} \\
+\hline
+[Name 1] & [ID] & Object selection, SRR document, Phase 1 \& 2 design & 25\% \\
+\hline
+[Name 2] & [ID] & Comparative matrix, FEA analysis, tolerancing & 25\% \\
+\hline
+[Name 3] & [ID] & CFD analysis, manufacturing analysis, PDR & 25\% \\
+\hline
+[Name 4] & [ID] & Technical specifications, appendix, report editing & 25\% \\
+\hline
+\multicolumn{3}{|r|}{\textbf{Total}} & \textbf{100\%} \\
+\hline
+\end{tabularx}
+\end{table}
+
+%--- Abstract --------------------------------------------------
+\newpage
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+This report presents a comprehensive Design for Manufacturing (DFM) analysis of the
+\textbf{Solift} -- a Three-Axis Solar-Powered Tilt-Rotor Unmanned Aerial Vehicle (UAV) --
+developed as part of the Technion DFM course project. The Solift platform is conceived as
+a heavy-lift heterogeneous VTOL (H-VTOL) logistics drone capable of vertical take-off and
+landing, seamless transition to efficient fixed-wing cruise flight, and extended-range
+operations augmented by integrated photovoltaic energy harvesting.
+
+The report covers eight primary sections: object selection and justification through a
+comparative matrix analysis; a formal Systems Requirements Review (SRR) document; a
+detailed concept design encompassing materials selection and solid modelling; a comprehensive 
+technical specification data sheet; a dedicated structural and aerodynamic simulation (FEA/CFD) 
+analysis; and a Preliminary Design Review (PDR). The design combines a
+prepreg carbon fibre / Nomex honeycomb airframe, aerospace-grade 7075-T6 aluminium tilt
+mechanisms, and flexible IBC solar cells encapsulated in ETFE film to achieve a maximum
+take-off weight of \SI{12.0}{kg} with a \SI{5.0}{kg} payload capacity and a target range
+exceeding \SI{120}{km} under illuminated conditions.
+
+%--- Table of Contents -----------------------------------------
+\newpage
+\tableofcontents
+\newpage
+\listoffigures
+\newpage
+\listoftables
+
+%===============================================================
+% CHAPTER 1 – Object Selection
+%===============================================================
+\input{sections/01_object_selection}
+
+%===============================================================
+% CHAPTER 2 – Comparative Matrix
+%===============================================================
+\input{sections/02_comparative_matrix}
+
+%===============================================================
+% CHAPTER 3 – SRR Document
+%===============================================================
+\input{sections/03_srr}
+
+%===============================================================
+% CHAPTER 4 – Detailed Concept Design
+%===============================================================
+\input{sections/04_concept_design}
+
+%===============================================================
+% CHAPTER 5 – Technical Specifications
+%===============================================================
+\input{sections/05_tech_specs}
+
+%===============================================================
+% CHAPTER 6 – Structural and Aerodynamic Simulation (FEA & CFD)
+%===============================================================
+\input{sections/06_simulation}
+
+%===============================================================
+% CHAPTER 7 – PDR Document
+%===============================================================
+\input{sections/07_pdr}
+
+%===============================================================
+% CHAPTER 8 – Appendix
+%===============================================================
+\input{sections/08_appendix}
+
+%--- Bibliography ----------------------------------------------
+\newpage
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

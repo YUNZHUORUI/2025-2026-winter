@@ -1,0 +1,146 @@
+%===============================================================
+% CHAPTER 3 – Systems Requirements Review (SRR) Document
+%===============================================================
+\chapter{Systems Requirements Review (SRR) Document}
+
+\section{Document Control Information}
+\begin{table}[H]
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{Document Title} & Systems Requirements Review (SRR) -- Solift H-VTOL \\
+\textbf{Document Number} & SLF-SRR-001 \\
+\textbf{Revision} & Rev A \\
+\textbf{Date} & 30 Apr., 2026 \\
+\textbf{Status} & Released for Review \\
+\textbf{Prepared by} &  Xinlei Lin \\
+\textbf{Approved by} & Dr. Anand Dwivedi \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\section{Functional Requirements}
+
+Functional requirements define \textit{what the system must do}. Each requirement is assigned a unique identifier (FR-XXX) and a priority (M = Mandatory, D = Desirable).
+
+\begin{longtable}{L{1.5cm} L{7cm} C{1.5cm} C{2.5cm}}
+\caption{Functional Requirements} \label{tab:FR} \\
+\toprule
+\textbf{ID} & \textbf{Requirement} & \textbf{Priority} & \textbf{Verification Method} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{\tablename\ \thetable{} (continued)} \\
+\toprule
+\textbf{ID} & \textbf{Requirement} & \textbf{Priority} & \textbf{Verification Method} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+FR-001 & The aircraft shall take off and land vertically without runway infrastructure & M & Flight test with VTOL take-off/landing demonstration \\
+FR-002 & The aircraft shall transition from VTOL hover to fixed-wing cruise mode within \SI{15}{s} & M & Timed flight test with telemetry measurement \\
+FR-003 & The aircraft shall deliver a payload of $\geq \SI{5.0}{kg}$ over a range of $\geq \SI{120}{km}$ & M & Payload loading, range analysis, and endurance flight test \\
+FR-004 & The solar array shall charge the main battery during cruise at $\geq \SI{200}{W}$ peak & M & Solar subsystem measurement under STC illumination \\
+FR-005 & The aircraft shall carry a standardised cargo box (500$\times$300$\times$200 mm) in the payload bay & M & Dimensional inspection and fit check \\
+FR-006 & The aircraft shall autonomously navigate a pre-programmed waypoint route & M & Autopilot software test with simulated and real waypoint mission \\
+FR-007 & The flight controller shall provide fail-safe return-to-home upon signal loss & M & Fail-safe test by intentional link interruption \\
+FR-008 & The aircraft should support hot-swap battery replacement on the ground & D & Ground demonstration of battery exchange procedure \\
+FR-009 & The tilt mechanism shall lock securely in both hover ($90^\circ$) and cruise ($0^\circ$) positions & M & Mechanical inspection and tilt-lock functional test \\
+FR-010 & The aircraft shall transmit real-time telemetry at $\geq \SI{1}{Hz}$ update rate & D & Telemetry link measurement during flight test \\
+\end{longtable}
+
+\section{Performance Parameters}
+
+\begin{longtable}{L{1.5cm} L{5cm} C{3cm} C{1.5cm} C{2cm}}
+\caption{Performance Requirements} \label{tab:PR} \\
+\toprule
+\textbf{ID} & \textbf{Parameter} & \textbf{Value / Limit} & \textbf{Unit} & \textbf{Verification} \\
+\midrule
+\endfirsthead
+\multicolumn{5}{c}{\tablename\ \thetable{} (continued)} \\
+\toprule
+\textbf{ID} & \textbf{Parameter} & \textbf{Value / Limit} & \textbf{Unit} & \textbf{Verification} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+PR-001 & Maximum Take-Off Weight (MTOW) & $\leq 12.0$ & kg & Weighing on calibrated scale prior to flight \\
+PR-002 & Empty weight (no payload, no battery) & $\leq 4.5$ & kg & Weighing of bare airframe assembly \\
+PR-003 & Cruise speed (rated) & 65 (18) & km/h (m/s) & GPS log and pitot tube measurement during flight test \\
+PR-004 & Hover thrust (each front motor) & $\geq \SI{3.5}{kg_f}$ per motor & --- & Motor test bench with thrust stand \\
+PR-005 & Front motor: Sunnysky X4112S, propeller 22$\times$6.6 in CF & -- & -- & Datasheet inspection and physical verification \\
+PR-006 & Rear motor: T-Motor U8 class, $\sim$85~KV, propeller 28$\times$9.2 in CF fold & -- & -- & Datasheet inspection and physical verification \\
+PR-007 & System bus voltage & 44.4 (12S) & V & Multimeter measurement under load \\
+PR-008 & Main battery capacity & $\geq 22{,}000$ & mAh & Datasheet check and discharge test \\
+PR-009 & Hover endurance (no solar, full battery) & $\geq 25$ & min & Timed hover flight until low-voltage cutoff \\
+PR-010 & Solar peak power output (STC) & $\geq 230$ & W & I-V curve measurement under standard test conditions \\
+PR-011 & Maximum range (5~kg payload, illuminated) & $\geq 120$ & km & Endurance flight test with payload and solar contribution analysis \\
+PR-012 & Wind resistance in hover & $\leq 5$ Beaufort (10.7 m/s) & -- & Hover flight in controlled wind tunnel or outdoor test \\
+PR-013 & Wind resistance in cruise & $\leq 6$ Beaufort (13.8 m/s) & -- & Cruise flight in controlled wind tunnel or outdoor test \\
+\end{longtable}
+
+\section{Interface and Environmental Requirements}
+
+\begin{longtable}{L{1.5cm} L{6cm} C{3.5cm} C{2cm}}
+\caption{Interface and Environmental Requirements} \label{tab:IER} \\
+\toprule
+\textbf{ID} & \textbf{Requirement} & \textbf{Specification} & \textbf{Verification} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{\tablename\ \thetable{} (continued)} \\
+\toprule
+\textbf{ID} & \textbf{Requirement} & \textbf{Specification} & \textbf{Verification} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+IER-001 & ESC--Motor interface protocol & DShot600 digital & Bench test of ESC response latency and signal integrity \\
+IER-002 & Flight controller -- ESC interface & PWM / DShot & Software inspection and hardware-in-loop test \\
+IER-003 & Flight controller -- tilt servo interface & PWM 50~Hz, 1--2~ms & Oscilloscope measurement of servo signal timing \\
+IER-004 & Telemetry link frequency & 915~MHz / 2.4~GHz & RF spectrum analysis and range test in open field \\
+IER-005 & Ground Control Station (GCS) software & MAVLink 2.0 protocol & Protocol compliance test with simulated mission upload \\
+IER-006 & Operating temperature range & $-10^\circ$C to $+55^\circ$C & Environmental chamber test with full system operation \\
+IER-007 & Storage temperature range & $-20^\circ$C to $+65^\circ$C & Thermal soak test of avionics and battery packs \\
+IER-008 & Ingress protection (avionics bay) & IP54 (dust \& rain) & Spray test and dust ingress inspection \\
+IER-009 & Minimum illumination for solar charge & $\geq 500$ W/m$^2$ & Solar panel I-V curve measurement under calibrated lamp \\
+IER-010 & Maximum operating altitude (AMSL) & $\leq 3000$ m & Flight test with barometric logging and performance analysis \\
+\end{longtable}
+
+
+\section{Requirements Traceability Matrix}
+
+Table~\ref{tab:traceability} maps high-level system requirements to specific sub-systems.
+
+\begin{table}[H]
+\centering
+\caption{Requirements Traceability Matrix}
+\label{tab:traceability}
+\begin{tabularx}{\textwidth}{C{1.5cm} X C{2cm} C{2cm} C{2cm} C{2cm}}
+\toprule
+\textbf{Req. ID} & \textbf{Requirement} & \textbf{Tilt Mechanism} & \textbf{Main Wing} & \textbf{Power Unit} & \textbf{Avionics} \\
+\midrule
+FR-001 & Vertical take-off/landing & \checkmark & \checkmark & \checkmark & \checkmark \\
+FR-002 & VTOL-to-cruise transition & \checkmark & \checkmark & \checkmark & \checkmark \\
+FR-003 & 5~kg / 120~km mission & & \checkmark & \checkmark & \checkmark \\
+FR-004 & Solar charging $\geq$200~W & & \checkmark & \checkmark & \\
+FR-009 & Tilt lock (hover/cruise) & \checkmark & & & \\
+PR-004 & Hover thrust $\geq$3.5~kg per motor & \checkmark & & \checkmark & \\
+PR-007 & 12S bus voltage & & & \checkmark & \checkmark \\
+IER-006 & Temp range $-10$ to $+55^\circ$C & \checkmark & \checkmark & \checkmark & \checkmark \\
+IER-008 & IP54 avionics bay & & & & \checkmark \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Verification Methods Summary}
+
+Requirements will be verified using a combination of complementary methods to ensure both functional and performance compliance:
+
+\begin{description}[noitemsep]
+    \item[Test (T):] Direct flight tests, thrust stand measurements, endurance trials, and subsystem bench tests under representative operating conditions.
+    \item[Analysis (A):] Mathematical modelling and simulation (ANSYS Mechanical, Fluent CFD) as well as hand calculations to validate aerodynamic, structural, and energy performance.
+    \item[Inspection (I):] Visual and dimensional checks against CAD drawings, datasheets, and tolerance specifications to confirm manufacturing accuracy.
+    \item[Demonstration (D):] Full-system demonstrations during design reviews to verify VTOL capability, tilt-lock operation, autonomous navigation, and telemetry functions.
+\end{description}
+
+Kinematic and structural simulation (ANSYS Mechanical / Fluent) will serve as the \textbf{primary analysis tool} for verifying FR-002 (VTOL-to-cruise transition), PR-011 (maximum range), and all structural requirements defined in Phase~3.
