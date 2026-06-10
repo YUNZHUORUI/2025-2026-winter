@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PM Brushed DC Motor — Flux, Current, Force & Torque</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', Arial, sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 16px; }
+  h1 { font-size: 1.15rem; color: #90caf9; text-align: center; margin-bottom: 4px; letter-spacing: 0.5px; }
+  .subtitle { font-size: 0.78rem; color: #78909c; text-align: center; margin-bottom: 14px; }
+  .container { display: flex; gap: 14px; align-items: flex-start; flex-wrap: wrap; justify-content: center; }
+  canvas { border-radius: 12px; background: #0d1b2a; box-shadow: 0 4px 24px #0005; }
+  .panel { background: #16213e; border-radius: 12px; padding: 14px 16px; min-width: 220px; max-width: 260px; }
+  .panel h3 { font-size: 0.82rem; color: #90caf9; margin-bottom: 10px; border-bottom: 1px solid #1e3a5f; padding-bottom: 6px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; font-size: 0.77rem; color: #cfd8dc; }
+  .dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+  .line { width: 22px; height: 3px; flex-shrink: 0; border-radius: 2px; }
+  .btn-row { display: flex; gap: 10px; margin: 12px 0 6px; justify-content: center; flex-wrap: wrap; }
+  button { padding: 8px 20px; border-radius: 8px; border: none; cursor: pointer; font-size: 0.83rem; font-weight: 600; transition: all .15s; }
+  #btnSwitch { background: #1565c0; color: #fff; }
+  #btnSwitch:hover { background: #1976d2; }
+  #btnSwitch.after { background: #b71c1c; }
+  #btnAnim { background: #1b5e20; color: #fff; }
+  #btnAnim:hover { background: #2e7d32; }
+  .eq-box { background: #0d1b2a; border-radius: 8px; padding: 8px 12px; margin-top: 8px; font-size: 0.82rem; line-height: 1.7; color: #b0bec5; }
+  .eq-box span { color: #fff; font-weight: 600; }
+  .state-badge { text-align: center; margin: 6px 0; font-size: 0.85rem; font-weight: 700; padding: 5px 14px; border-radius: 20px; display: inline-block; }
+  .badge-before { background: #1b5e20; color: #a5d6a7; }
+  .badge-after { background: #7f0000; color: #ef9a9a; }
+  .badge-wrap { text-align: center; }
+</style>
+</head>
+<body>
+<h1>PM Brushed DC Motor — Commutation: Flux · Current · Force · Torque</h1>
+<p class="subtitle">Cross-section view (shaft axis into page) &nbsp;|&nbsp; KIT-160MT30 geometry</p>
+
+<div class="btn-row">
+  <button id="btnSwitch">⚡ Switch Commutator</button>
+  <button id="btnAnim">▶ Animate Flux</button>
+</div>
+<div class="badge-wrap"><span id="stateBadge" class="state-badge badge-before">BEFORE COMMUTATION</span></div>
+
+<div class="container" style="margin-top:12px;">
+  <canvas id="c" width="520" height="520"></canvas>
+
+  <div class="panel">
+    <h3>Legend</h3>
+    <div class="legend-item"><div class="dot" style="background:#ef5350;"></div> N pole (top)</div>
+    <div class="legend-item"><div class="dot" style="background:#42a5f5;"></div> S pole (bottom)</div>
+    <div class="legend-item"><div class="line" style="background:#ef5350;"></div> Magnetic flux <b>B⃗</b> (radial)</div>
+    <div class="legend-item"><div class="dot" style="background:#a5d6a7; border:2px solid #2e7d32;"></div> Current ⊙ out of page</div>
+    <div class="legend-item"><div class="dot" style="background:#ffccbc; border:2px solid #bf360c;"></div> Current ⊗ into page</div>
+    <div class="legend-item"><div class="line" style="background:#ffb300;"></div> Force <i>F = BIL</i> (tangential)</div>
+    <div class="legend-item"><div class="line" style="background:#ce93d8;"></div> Torque <i>τ = F·l</i></div>
+
+    <h3 style="margin-top:14px;">Equations</h3>
+    <div class="eq-box">
+      <span>F = B · I · L</span><br>
+      Lorentz force on conductor<br><br>
+      <span>τ = F · l</span><br>
+      l = moment arm (rotor radius)<br><br>
+      <span>τ = B · I · L · l</span><br>
+      = B · I · (L · r)<br><br>
+      Commutator reverses <span>I</span><br>
+      every half-turn → <span>τ</span> same direction always
+    </div>
+
+    <h3 style="margin-top:14px;">Commutation Logic</h3>
+    <div class="eq-box" style="font-size:0.75rem; line-height:1.8;">
+      <b>Before:</b> Left ⊙, Right ⊗<br>
+      → F<sub>left</sub> ↑, F<sub>right</sub> ↓ → CCW<br><br>
+      <b>After:</b> Brushes swap<br>
+      Left ⊗, Right ⊙<br>
+      → F<sub>left</sub> ↓, F<sub>right</sub> ↑ → CCW ✓<br><br>
+      <b style="color:#ffb300;">Same rotation maintained!</b>
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height, CX = W/2, CY = H/2;
+
+let switched  = false;
+let animating = false;
+let fluxPhase = 0;
+let animID    = null;
+
+// ── Geometry constants ────────────────────────────────────────────────────────
+const R_BORE   = 195;   // stator inner radius (px)
+const R_ROTOR  = 130;   // rotor outer radius
+const R_SHAFT  =  18;   // shaft radius
+const R_COND   = 100;   // conductor radial position
+const R_MAGNET_IN  = R_BORE;
+const R_MAGNET_OUT = R_BORE + 32;
+const POLE_HALF_ANG = 68 * Math.PI / 180;  // half-angle of each pole arc
+
+// ── Colours ───────────────────────────────────────────────────────────────────
+const COL = {
+  N:       '#ef5350', N_dark: '#b71c1c',
+  S:       '#42a5f5', S_dark: '#0d47a1',
+  flux:    '#ef5350',
+  rotorFill: '#1a2a3a', rotorEdge: '#37474f',
+  shaft:   '#607d8b',
+  condOut: '#2e7d32', condIn: '#bf360c',
+  force:   '#ffb300',
+  torque:  '#ab47bc',
+  neutral: '#546e7a',
+  housing: '#455a64',
+  brush:   '#ffa726',
+};
+
+function clear() {
+  ctx.clearRect(0, 0, W, H);
+}
+
+// ── Draw arc (path helper) ────────────────────────────────────────────────────
+function arcPath(cx, cy, r1, r2, a1, a2) {
+  ctx.beginPath();
+  ctx.arc(cx, cy, r2, a1, a2);
+  ctx.arc(cx, cy, r1, a2, a1, true);
+  ctx.closePath();
+}
+
+// ── Draw stator housing ring ──────────────────────────────────────────────────
+function drawHousing() {
+  ctx.save();
+  // Outer stator ring
+  ctx.beginPath();
+  ctx.arc(CX, CY, R_MAGNET_OUT + 10, 0, Math.PI*2);
+  ctx.arc(CX, CY, R_BORE - 2, 0, Math.PI*2, true);
+  ctx.fillStyle = '#1c2a38';
+  ctx.fill();
+  ctx.strokeStyle = '#37474f';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.restore();
+}
+
+// ── Draw N and S pole magnets (arc segments) ──────────────────────────────────
+function drawMagnets() {
+  ctx.save();
+  // N pole: top arc (centred on -π/2 = top)
+  const nA1 = -Math.PI/2 - POLE_HALF_ANG;
+  const nA2 = -Math.PI/2 + POLE_HALF_ANG;
+  arcPath(CX, CY, R_MAGNET_IN, R_MAGNET_OUT, nA1, nA2);
+  ctx.fillStyle = COL.N;
+  ctx.fill();
+  ctx.strokeStyle = COL.N_dark;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 22px Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('N', CX, CY - R_BORE - 16);
+
+  // S pole: bottom arc (centred on +π/2 = bottom)
+  const sA1 = Math.PI/2 - POLE_HALF_ANG;
+  const sA2 = Math.PI/2 + POLE_HALF_ANG;
+  arcPath(CX, CY, R_MAGNET_IN, R_MAGNET_OUT, sA1, sA2);
+  ctx.fillStyle = COL.S;
+  ctx.fill();
+  ctx.strokeStyle = COL.S_dark;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.fillText('S', CX, CY + R_BORE + 16);
+  ctx.restore();
+}
+
+// ── Draw rotor disc ───────────────────────────────────────────────────────────
+function drawRotor() {
+  ctx.save();
+  // Rotor body
+  ctx.beginPath();
+  ctx.arc(CX, CY, R_ROTOR, 0, Math.PI*2);
+  const grad = ctx.createRadialGradient(CX, CY, 10, CX, CY, R_ROTOR);
+  grad.addColorStop(0, '#1e3a5f');
+  grad.addColorStop(1, '#0d1b2a');
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.strokeStyle = COL.rotorEdge;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // 3 slot lines (simplified)
+  for (let i = 0; i < 3; i++) {
+    const a = i * Math.PI * 2 / 3;
+    ctx.beginPath();
+    ctx.moveTo(CX, CY);
+    ctx.lineTo(CX + R_ROTOR * Math.cos(a), CY + R_ROTOR * Math.sin(a));
+    ctx.strokeStyle = '#1e3a5f';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
+  // Shaft
+  ctx.beginPath();
+  ctx.arc(CX, CY, R_SHAFT, 0, Math.PI*2);
+  ctx.fillStyle = COL.shaft;
+  ctx.fill();
+  ctx.strokeStyle = '#90a4ae';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.restore();
+}
+
+// ── Draw magnetic flux field lines ────────────────────────────────────────────
+function drawFlux(phase) {
+  ctx.save();
+  ctx.globalAlpha = 0.75;
+
+  // Flux enters rotor from N (top) and exits to S (bottom) — radial lines
+  const nLines = 7;
+  for (let i = 0; i < nLines; i++) {
+    const spread = (POLE_HALF_ANG * 2 * 0.85);
+    const a = -Math.PI/2 - spread/2 + (i/(nLines-1)) * spread;
+
+    // N→rotor (downward from top)
+    const xN_out = CX + R_MAGNET_IN * Math.cos(a);
+    const yN_out = CY + R_MAGNET_IN * Math.sin(a);
+    const xN_in  = CX + R_ROTOR * Math.cos(a);
+    const yN_in  = CY + R_ROTOR * Math.sin(a);
+
+    // Animated dash offset
+    const dashOffset = phase * 6;
+    ctx.setLineDash([8, 6]);
+    ctx.lineDashOffset = -dashOffset;
+    ctx.strokeStyle = COL.flux;
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    ctx.moveTo(xN_out, yN_out);
+    ctx.lineTo(xN_in, yN_in);
+    ctx.stroke();
+
+    // Arrowhead in middle
+    const mx = (xN_out + xN_in) / 2;
+    const my = (yN_out + yN_in) / 2;
+    const dx = xN_in - xN_out; const dy = yN_in - yN_out;
+    const len = Math.hypot(dx, dy);
+    drawArrowhead(mx, my, dx/len, dy/len, 8, COL.flux);
+
+    // S←rotor (downward from rotor to S)
+    const aS = Math.PI/2 - spread/2 + (i/(nLines-1)) * spread;
+    const xS_in  = CX + R_ROTOR * Math.cos(aS);
+    const yS_in  = CY + R_ROTOR * Math.sin(aS);
+    const xS_out = CX + R_MAGNET_IN * Math.cos(aS);
+    const yS_out = CY + R_MAGNET_IN * Math.sin(aS);
+    ctx.lineDashOffset = -dashOffset;
+    ctx.beginPath();
+    ctx.moveTo(xS_in, yS_in);
+    ctx.lineTo(xS_out, yS_out);
+    ctx.stroke();
+    const mx2 = (xS_in + xS_out) / 2;
+    const my2 = (yS_in + yS_out) / 2;
+    const dx2 = xS_out - xS_in; const dy2 = yS_out - yS_in;
+    const len2 = Math.hypot(dx2, dy2);
+    drawArrowhead(mx2, my2, dx2/len2, dy2/len2, 8, COL.flux);
+  }
+
+  // Through-rotor flux (curved arcs inside)
+  ctx.setLineDash([5, 5]);
+  ctx.lineDashOffset = -phase * 5;
+  ctx.globalAlpha = 0.35;
+  for (let i = -2; i <= 2; i++) {
+    ctx.beginPath();
+    ctx.arc(CX + i * 18, CY, 28, -Math.PI/2, Math.PI/2);
+    ctx.strokeStyle = '#90caf9';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+  }
+
+  ctx.setLineDash([]);
+  ctx.restore();
+}
+
+// ── B label ───────────────────────────────────────────────────────────────────
+function drawBLabel() {
+  ctx.save();
+  ctx.font = 'bold 15px serif';
+  ctx.fillStyle = '#ef9a9a';
+  ctx.textAlign = 'left';
+  ctx.fillText('B⃗', CX - R_BORE + 8, CY - R_BORE/2 + 10);
+  ctx.restore();
+}
+
+// ── Draw conductors ───────────────────────────────────────────────────────────
+function drawConductors() {
+  // 2 active conductors: Left (θ=180°) and Right (θ=0°)
+  // Before switch: Left=⊙, Right=⊗  |  After switch: Left=⊗, Right=⊙
+  const leftOut  = !switched;
+  const rightOut = switched;
+
+  drawConductor(CX - R_COND, CY, leftOut,  -1, 'Left\nconductor');
+  drawConductor(CX + R_COND, CY, rightOut,  1, 'Right\nconductor');
+}
+
+function drawConductor(x, y, outOfPage, side, lbl) {
+  ctx.save();
+  const r = 18;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI*2);
+  ctx.fillStyle = outOfPage ? '#1b3a1b' : '#3a1b1b';
+  ctx.fill();
+  ctx.strokeStyle = outOfPage ? COL.condOut : COL.condIn;
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  ctx.fillStyle = outOfPage ? '#a5d6a7' : '#ffccbc';
+  ctx.font = 'bold 18px Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(outOfPage ? '⊙' : '⊗', x, y + 1);
+
+  // I label
+  ctx.font = 'bold 11px Arial';
+  ctx.fillStyle = outOfPage ? '#a5d6a7' : '#ffccbc';
+  ctx.fillText('I', x + side * 28, y);
+
+  // Conductor label
+  ctx.font = '9px Arial';
+  ctx.fillStyle = '#90a4ae';
+  ctx.fillText(lbl.split('\n')[0], x, y - r - 14);
+  ctx.fillText(lbl.split('\n')[1], x, y - r - 4);
+
+  ctx.restore();
+}
+
+// ── Draw force arrows (F = BIL, tangential) ───────────────────────────────────
+function drawForces() {
+  // Left conductor: B radial inward (→ +x locally), Left⊙: F = ẑ×x̂ = ŷ = UP
+  // Left conductor: Left⊗: F = (-ẑ)×x̂ = -ŷ = DOWN
+  // Right conductor: B radial inward (← -x locally), Right⊙: F = ẑ×(-x̂) = -ŷ = DOWN
+  // Right conductor: Right⊗: F = (-ẑ)×(-x̂) = +ŷ = UP
+  const leftOut  = !switched;
+  const rightOut = switched;
+
+  const fLen = 55;
+  const fCol = COL.force;
+
+  // Left conductor force
+  const fL = leftOut ? -1 : 1;  // -1=up (in canvas y), +1=down
+  drawForceArrow(CX - R_COND, CY, fL, fLen, fCol);
+
+  // Right conductor force
+  const fR = rightOut ? 1 : -1;  // rightOut⊙: -ŷ=down in physics = +1 in canvas
+  drawForceArrow(CX + R_COND, CY, fR, fLen, fCol);
+}
+
+function drawForceArrow(x, y, dir, len, col) {
+  // dir: -1 = upward in canvas (visually up), +1 = downward
+  const yStart = y + dir * 22;
+  const yEnd   = y + dir * (22 + len);
+  ctx.save();
+  ctx.strokeStyle = col;
+  ctx.fillStyle   = col;
+  ctx.lineWidth   = 3;
+  ctx.beginPath();
+  ctx.moveTo(x, yStart);
+  ctx.lineTo(x, yEnd);
+  ctx.stroke();
+  drawArrowhead(x, yEnd, 0, dir, 10, col);
+
+  // F=BIL label
+  ctx.font = 'bold 11px Arial';
+  ctx.fillStyle = col;
+  ctx.textAlign = x < CX ? 'right' : 'left';
+  ctx.textBaseline = 'middle';
+  const lx = x + (x < CX ? -8 : 8);
+  ctx.fillText('F = BIL', lx, (yStart + yEnd) / 2);
+  ctx.restore();
+}
+
+// ── Draw torque arc ───────────────────────────────────────────────────────────
+function drawTorque() {
+  ctx.save();
+  const r = 55;
+  // Both before and after: CCW torque (forces: left=up, right=down → CCW)
+  // Canvas: up = negative y → left force goes to negative y = upward visually
+  // CCW in standard math = CW in canvas (y-axis flipped)
+  // Let's draw the arc correctly: CCW rotation means the top goes left
+  const aStart = Math.PI * 0.15;
+  const aEnd   = Math.PI * 1.85;
+
+  ctx.beginPath();
+  ctx.arc(CX, CY, r, aStart, aEnd, false);
+  ctx.strokeStyle = COL.torque;
+  ctx.lineWidth = 3;
+  ctx.setLineDash([]);
+  ctx.stroke();
+
+  // Arrowhead at end of arc
+  const aArr = aEnd;
+  const dx = -Math.sin(aArr);
+  const dy =  Math.cos(aArr);
+  drawArrowhead(CX + r*Math.cos(aArr), CY + r*Math.sin(aArr), -dx, -dy, 11, COL.torque);
+
+  // τ label
+  ctx.font = 'bold 13px serif';
+  ctx.fillStyle = COL.torque;
+  ctx.textAlign = 'center';
+  ctx.fillText('τ = F·l', CX, CY + 20);
+  ctx.font = '10px Arial';
+  ctx.fillStyle = '#ce93d8';
+  ctx.fillText('(CCW rotation)', CX, CY + 34);
+  ctx.restore();
+}
+
+// ── Moment arm label ──────────────────────────────────────────────────────────
+function drawMomentArm() {
+  ctx.save();
+  ctx.strokeStyle = '#546e7a';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([5, 4]);
+  ctx.beginPath();
+  ctx.moveTo(CX, CY + 8);
+  ctx.lineTo(CX - R_COND, CY + 8);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Arrow caps
+  drawArrowhead(CX - R_COND + 2, CY + 8, -1, 0, 7, '#546e7a');
+  drawArrowhead(CX - 2,          CY + 8,  1, 0, 7, '#546e7a');
+
+  ctx.font = '11px Arial';
+  ctx.fillStyle = '#78909c';
+  ctx.textAlign = 'center';
+  ctx.fillText('l (moment arm)', CX - R_COND/2, CY + 22);
+  ctx.restore();
+}
+
+// ── Neutral plane ──────────────────────────────────────────────────────────────
+function drawNeutralPlane() {
+  ctx.save();
+  ctx.strokeStyle = '#37474f';
+  ctx.lineWidth = 1.2;
+  ctx.setLineDash([8, 6]);
+  ctx.beginPath();
+  ctx.moveTo(CX - R_BORE + 5, CY);
+  ctx.lineTo(CX + R_BORE - 5, CY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.font = '9px Arial';
+  ctx.fillStyle = '#546e7a';
+  ctx.textAlign = 'left';
+  ctx.fillText('Neutral plane', CX + R_BORE - 88, CY - 5);
+  ctx.restore();
+}
+
+// ── Commutator at bottom ───────────────────────────────────────────────────────
+function drawCommutator() {
+  ctx.save();
+  const cy = CY + R_BORE + 18;
+  const r  = 26;
+
+  // Two segments (left = + or − depending on switch state)
+  const leftPlus = !switched;
+  ctx.beginPath();
+  ctx.arc(CX, cy, r, Math.PI, 2*Math.PI);
+  ctx.fillStyle = leftPlus ? '#b71c1c' : '#0d47a1';
+  ctx.fill();
+  ctx.strokeStyle = '#222';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(CX, cy, r, 0, Math.PI);
+  ctx.fillStyle = leftPlus ? '#0d47a1' : '#b71c1c';
+  ctx.fill();
+  ctx.stroke();
+
+  // Dividing line
+  ctx.beginPath();
+  ctx.moveTo(CX - r, cy);
+  ctx.lineTo(CX + r, cy);
+  ctx.strokeStyle = '#111';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  ctx.font = 'bold 12px Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#fff';
+  ctx.fillText(leftPlus ? '+' : '−', CX - 12, cy - 10);
+  ctx.fillText(leftPlus ? '−' : '+', CX + 12, cy + 10);
+
+  ctx.font = '9px Arial';
+  ctx.fillStyle = '#90a4ae';
+  ctx.fillText('Commutator', CX, cy + r + 10);
+
+  // Brushes
+  for (const [bx, bl] of [[CX - r - 18, '+'], [CX + r + 18, '−']]) {
+    ctx.fillStyle = COL.brush;
+    ctx.fillRect(bx - 9, cy - 8, 18, 16);
+    ctx.strokeStyle = '#e65100';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(bx - 9, cy - 8, 18, 16);
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 10px Arial';
+    ctx.fillText(bl, bx, cy);
+    ctx.font = '8px Arial';
+    ctx.fillStyle = '#ffcc80';
+    ctx.fillText('Brush', bx, cy + r + 10);
+  }
+
+  // Connection wires to conductors
+  const condLx = CX - R_COND, condRx = CX + R_COND;
+  ctx.strokeStyle = switched ? COL.condIn + 'aa' : COL.condOut + 'aa';
+  ctx.setLineDash([4, 4]);
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(CX - r - 9, cy);
+  ctx.lineTo(condLx, CY);
+  ctx.stroke();
+  ctx.strokeStyle = switched ? COL.condOut + 'aa' : COL.condIn + 'aa';
+  ctx.beginPath();
+  ctx.moveTo(CX + r + 9, cy);
+  ctx.lineTo(condRx, CY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+}
+
+// ── Arrow head helper ─────────────────────────────────────────────────────────
+function drawArrowhead(x, y, nx, ny, size, col) {
+  const px = -ny, py = nx;
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x - nx*size + px*size*0.5, y - ny*size + py*size*0.5);
+  ctx.lineTo(x - nx*size - px*size*0.5, y - ny*size - py*size*0.5);
+  ctx.closePath();
+  ctx.fillStyle = col;
+  ctx.fill();
+  ctx.restore();
+}
+
+// ── Switch-state overlay text ─────────────────────────────────────────────────
+function drawStateLabel() {
+  ctx.save();
+  ctx.font = 'bold 12px Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  const label = switched ? '⚡ AFTER COMMUTATION' : '▶ BEFORE COMMUTATION';
+  const col   = switched ? '#ef5350' : '#66bb6a';
+  ctx.fillStyle = col;
+  ctx.fillText(label, CX, 10);
+  ctx.restore();
+}
+
+// ── Main draw ─────────────────────────────────────────────────────────────────
+function draw() {
+  clear();
+  drawHousing();
+  drawMagnets();
+  drawFlux(fluxPhase);
+  drawBLabel();
+  drawNeutralPlane();
+  drawRotor();
+  drawMomentArm();
+  drawConductors();
+  drawForces();
+  drawTorque();
+  drawCommutator();
+  drawStateLabel();
+}
+
+// ── Animation loop ────────────────────────────────────────────────────────────
+function animate() {
+  fluxPhase += 0.04;
+  draw();
+  animID = requestAnimationFrame(animate);
+}
+
+// ── Buttons ───────────────────────────────────────────────────────────────────
+document.getElementById('btnSwitch').addEventListener('click', () => {
+  switched = !switched;
+  const btn = document.getElementById('btnSwitch');
+  const badge = document.getElementById('stateBadge');
+  if (switched) {
+    btn.textContent = '⚡ Switch Back';
+    btn.classList.add('after');
+    badge.textContent = 'AFTER COMMUTATION';
+    badge.className = 'state-badge badge-after';
+  } else {
+    btn.textContent = '⚡ Switch Commutator';
+    btn.classList.remove('after');
+    badge.textContent = 'BEFORE COMMUTATION';
+    badge.className = 'state-badge badge-before';
+  }
+  if (!animating) draw();
+});
+
+document.getElementById('btnAnim').addEventListener('click', () => {
+  animating = !animating;
+  document.getElementById('btnAnim').textContent = animating ? '⏸ Pause Flux' : '▶ Animate Flux';
+  if (animating) {
+    animate();
+  } else {
+    cancelAnimationFrame(animID);
+    draw();
+  }
+});
+
+draw();
+</script>
+</body>
+</html>

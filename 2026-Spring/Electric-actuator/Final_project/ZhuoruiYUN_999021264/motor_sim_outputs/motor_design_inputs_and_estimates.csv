@@ -1,0 +1,53 @@
+=== MATERIAL ===
+Material,NdFeB N52
+Br (T),1.45
+Hc (kA/m),955.0
+Recoil mu_r,1.05
+
+=== GEOMETRY ===
+Axial depth (mm),150.0
+Iron-core diameter (mm),39.0
+Bore diameter (mm),40.0
+Air gap (mm),0.5000000000000004
+Magnet thickness (mm),2.444222633737573
+Air-gap area (cm²),150.70219959270233
+Core area (cm²),58.5
+
+=== RELUCTANCES (H⁻¹) ===
+R_magnet,1.13e+05
+R_gap,2.64e+04
+R_core,2.09e+03
+R_return,4.94e+06
+R_total,5.08e+06
+
+=== MAGNETIC QUANTITIES ===
+MMF (A),2334.23
+Flux phi (mWb),0.4591
+B_gap (T),0.0305
+B_core (T),0.0785
+mu_steel_eff (relative),3978.9
+
+=== MOTOR CONSTANTS ===
+Kt = Ke (N·m/A),0.03030
+R_coil (Ω),0.0740
+L_coil (mH),50.0000
+J_rotor (g·cm²),2674.3561
+Wire total length (m),84.504
+
+=== DRIVING ===
+Voltage (V),200.0
+Turns,200
+Wire dia (mm),5.0
+Lam thickness (mm),0.05
+
+=== STEADY-STATE RESULTS ===
+Speed (RPM),59890.3
+Current (A),135.2912
+Back-EMF (V),190.0259
+Fan output power (mW),24669824.919
+Copper loss (mW),1354967.496
+Eddy-current loss (mW),9.623
+Hysteresis loss (mW),189.123
+Mechanical loss (mW),788570.731
+Input power (mW),27058237.506
+Efficiency (%),91.18

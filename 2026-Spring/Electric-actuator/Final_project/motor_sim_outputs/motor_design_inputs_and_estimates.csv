@@ -5,49 +5,49 @@ Hc (kA/m),955.0
 Recoil mu_r,1.05
 
 === GEOMETRY ===
-Axial depth (mm),12.0
-Iron-core diameter (mm),10.0
-Bore diameter (mm),12.0
-Air gap (mm),1.0
-Magnet thickness (mm),1.0
-Air-gap area (cm²),2.261946710584651
-Core area (cm²),0.7853981633974483
+Axial depth (mm),150.0
+Iron-core diameter (mm),39.0
+Bore diameter (mm),40.0
+Air gap (mm),0.5000000000000004
+Magnet thickness (mm),2.444222633737573
+Air-gap area (cm²),150.70219959270233
+Core area (cm²),58.5
 
 === RELUCTANCES (H⁻¹) ===
-R_magnet,3.35e+06
-R_gap,3.52e+06
-R_core,3.71e+05
-R_return,7.04e+05
-R_total,7.94e+06
+R_magnet,1.13e+05
+R_gap,2.64e+04
+R_core,2.09e+03
+R_return,4.94e+06
+R_total,5.08e+06
 
 === MAGNETIC QUANTITIES ===
-MMF (A),955.00
-Flux phi (mWb),0.1202
-B_gap (T),0.5315
-B_core (T),1.5308
-mu_steel_eff (relative),214.7
+MMF (A),2334.23
+Flux phi (mWb),0.4591
+B_gap (T),0.0305
+B_core (T),0.0785
+mu_steel_eff (relative),3978.9
 
 === MOTOR CONSTANTS ===
-Kt = Ke (N·m/A),0.00144
-R_coil (Ω),2.4272
-L_coil (mH),0.0167
-J_rotor (g·cm²),0.9189
-Wire total length (m),2.494
+Kt = Ke (N·m/A),0.03030
+R_coil (Ω),0.0740
+L_coil (mH),50.0000
+J_rotor (g·cm²),2674.3561
+Wire total length (m),84.504
 
 === DRIVING ===
-Voltage (V),3.0
-Turns,45
-Wire dia (mm),0.15
-Lam thickness (mm),0.5
+Voltage (V),200.0
+Turns,200
+Wire dia (mm),5.0
+Lam thickness (mm),0.05
 
 === STEADY-STATE RESULTS ===
-Speed (RPM),3588.0
-Current (A),7.4129
-Back-EMF (V),0.5392
-Fan output power (mW),1060.591
-Copper loss (mW),266754.495
-Eddy-current loss (mW),4.253
-Hysteresis loss (mW),3.175
-Mechanical loss (mW),2935.472
-Input power (mW),22238.759
-Efficiency (%),1.17
+Speed (RPM),59890.3
+Current (A),135.2912
+Back-EMF (V),190.0259
+Fan output power (mW),24669824.919
+Copper loss (mW),1354967.496
+Eddy-current loss (mW),9.623
+Hysteresis loss (mW),189.123
+Mechanical loss (mW),788570.731
+Input power (mW),27058237.506
+Efficiency (%),91.18

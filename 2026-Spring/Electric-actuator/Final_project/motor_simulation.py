@@ -39,12 +39,10 @@ MATERIALS = {
 #  LAMINATED ELECTRICAL-STEEL B-H CURVE
 #  (typical M19 / 50Hz non-oriented steel)
 # ─────────────────────────────────────────────
-BH_B = np.array([0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6,
-                 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3,
-                 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0])
-BH_H = np.array([  0,  28,  40,  50,  60,  70,  85,
-                  105, 135, 175, 240, 340, 530, 900,
-                 1600,3000,6000,12000,24000,45000,80000])
+BH_B = np.array([0.00, 0.20, 0.50, 0.80, 1.00, 1.20,
+                 1.35, 1.50, 1.60, 1.70, 1.80, 1.90])
+BH_H = np.array([0.0,  40.0, 90.0, 170.0, 300.0,  650.0,
+                 1200.0, 2600.0, 5200.0, 12000.0, 30000.0, 80000.0])
 
 def interpolate_H(B_val):
     """Return H [A/m] for a given B [T] using the steel B-H curve."""
@@ -54,8 +52,8 @@ def interpolate_H(B_val):
 # ─────────────────────────────────────────────
 #  FIXED GEOMETRY  (stator magnet shell)
 # ─────────────────────────────────────────────
-D_BORE   = 12e-3      # fixed magnet bore diameter  [m]  (12 mm, typical DC3V)
-D_SQUARE = 14e-3      # fixed square outside side   [m]  (14 mm)
+D_BORE   = 40e-3      # fixed magnet bore diameter  [m]
+D_SQUARE = 40e-3      # fixed square outside side   [m]  (= FIXED_MAGNET_OUTER_SIDE)
 G_MIN    = 0.5e-3     # minimum air-gap             [m]
 
 MU0 = 4e-7 * np.pi   # permeability of free space
@@ -63,18 +61,18 @@ MU0 = 4e-7 * np.pi   # permeability of free space
 # ─────────────────────────────────────────────
 #  FAN / MECHANICAL CONSTANTS
 # ─────────────────────────────────────────────
-K_FAN  = 2.0e-8       # fan load  τ_fan = k_fan·ω²  [N·m·s²/rad²]
+K_FAN  = 1.0e-7       # fan load  τ_fan = k_fan·ω²  [N·m·s²/rad²]  (= DEFAULT_FAN_COEFF)
 B_DAMP = 2.0e-5       # viscous damping              [N·m·s/rad]
 T_FRIC = 3.0e-4       # Coulomb friction             [N·m]
 
 # Steinmetz hysteresis
-K_H    = 40.0         # hysteresis coefficient       [W/(T^α · Hz · m³)]
-ALPHA  = 1.8          # Steinmetz exponent
+K_H    = 80.0         # hysteresis coefficient       [W/(T^α · Hz · m³)]  (= steinmetz_k_W_per_m3_Hz_Talpha)
+ALPHA  = 1.7          # Steinmetz exponent  (= steinmetz_alpha)
 
 # ─────────────────────────────────────────────
 #  SIMULATION TIME
 # ─────────────────────────────────────────────
-T_END = 0.5           # total sim time [s]
+T_END = 2.0           # total sim time [s]  (= DEFAULT_SIMULATION_TIME)
 DT    = 1e-4          # time step      [s]
 
 # ─────────────────────────────────────────────────────────────
@@ -94,29 +92,41 @@ def magnetic_circuit(mat, L_axial, D_core):
             f"Air gap g = {g*1e3:.2f} mm < minimum {G_MIN*1e3:.1f} mm. "
             f"Increase core diameter or decrease bore.")
 
-    # Average magnet radial thickness (bore circle → square outside)
-    # Approximate as (half_diagonal_of_square - bore_radius)
-    R_square_eq = D_SQUARE / 2 / np.sqrt(2) * (1 + np.sqrt(2)) / 2  # mean
-    t_mag = max((D_SQUARE / 2) - R_bore, 1e-3)   # simple radial estimate
+    pole_arc_fraction = 0.82            # matches analysis.py
 
-    # Areas
-    A_gap  = np.pi * R_bore  * L_axial   # air-gap surface area (half bore)
-    A_core = np.pi * R_core**2            # rotor cross-section
+    # Average magnet radial thickness: polar sweep from bore to square outer
+    # boundary (analysis.py: average_magnet_length_m property)
+    half_side  = D_SQUARE / 2.0
+    thetas     = np.linspace(0.0, 2.0 * np.pi, 720, endpoint=False)
+    denom      = np.maximum(np.abs(np.cos(thetas)), np.abs(np.sin(thetas)))
+    boundary_r = half_side / np.maximum(denom, 1e-12)
+    l_m_avg    = float(np.mean(boundary_r - R_bore))   # average magnet length
+    r_mag_mean = R_bore + 0.5 * l_m_avg                # mean magnet radius
 
-    # MMF source
+    # Areas  (matching analysis.py formulas)
+    A_gap    = max(1e-12, pole_arc_fraction * 2.0 * np.pi * R_core * L_axial)
+    A_mag    = max(1e-12, pole_arc_fraction * 2.0 * np.pi * r_mag_mean * L_axial)
+    A_core   = max(1e-12, D_core * L_axial)          # rectangular cross-section
+    A_return = max(1e-12, pole_arc_fraction * np.pi * R_bore * L_axial)
+
+    # Actual iron cylinder volume (for eddy/hysteresis loss calculations)
+    V_core_iron = np.pi * R_core**2 * L_axial
+
+    # MMF source  (analysis.py: F_pm = Hc * l_m_avg)
     Hc   = mat["Hc"]
-    MMF  = Hc * t_mag                    # F_mag = Hc * l_mag
+    MMF  = Hc * l_m_avg
 
     # Individual reluctances  R = l / (mu * A)
     mu_mag    = mat["mu_r"] * MU0
-    R_mag     = t_mag      / (mu_mag * A_gap)
-    R_gap     = g          / (MU0   * A_gap)
-    # Steel core reluctance — start with linear guess, iterate once for sat.
-    l_core    = np.pi * R_core / 2       # approximate mean flux path in core
-    mu_steel0 = 2000 * MU0
+    R_mag     = l_m_avg / (mu_mag * A_mag)
+    R_gap     = g / (MU0 * A_gap)
+    # Steel core reluctance — start with linear guess (mu_r_steel_unsat = 4000)
+    l_core    = np.pi * R_core              # half circumference (analysis.py)
+    mu_steel0 = 4000 * MU0
     R_core_el = l_core / (mu_steel0 * A_core)
-    # Simplified return-air reluctance (leakage factor ~20% of gap)
-    R_return  = 0.20 * R_gap
+    # Return-path reluctance through air (dominant term, matches analysis.py)
+    l_return  = 1.2 * D_SQUARE
+    R_return  = l_return / (MU0 * A_return)
 
     R_total   = R_mag + R_gap + R_core_el + R_return
     phi_ideal = MMF / R_total
@@ -129,7 +139,7 @@ def magnetic_circuit(mat, L_axial, D_core):
     if B_core > 0:
         mu_steel_eff = B_core / (H_core + 1e-9) / MU0   # relative
     else:
-        mu_steel_eff = 2000.0
+        mu_steel_eff = 4000.0
     R_core_el = l_core / (mu_steel_eff * MU0 * A_core)
 
     R_total   = R_mag + R_gap + R_core_el + R_return
@@ -138,21 +148,23 @@ def magnetic_circuit(mat, L_axial, D_core):
     B_core    = phi / A_core
 
     return {
-        "g":         g,
-        "t_mag":     t_mag,
-        "A_gap":     A_gap,
-        "A_core":    A_core,
-        "l_core":    l_core,
-        "MMF":       MMF,
-        "R_mag":     R_mag,
-        "R_gap":     R_gap,
-        "R_core":    R_core_el,
-        "R_return":  R_return,
-        "R_total":   R_total,
-        "phi":       phi,
-        "B_gap":     B_gap,
-        "B_core":    B_core,
-        "mu_steel":  mu_steel_eff,
+        "g":            g,
+        "t_mag":        l_m_avg,
+        "A_gap":        A_gap,
+        "A_core":       A_core,
+        "l_core":       l_core,
+        "V_core":       V_core_iron,
+        "MMF":          MMF,
+        "R_mag":        R_mag,
+        "R_gap":        R_gap,
+        "R_core":       R_core_el,
+        "R_return":     R_return,
+        "R_total":      R_total,
+        "phi":          phi,
+        "B_gap":        B_gap,
+        "B_core":       B_core,
+        "mu_steel":     mu_steel_eff,
+        "pole_arc":     pole_arc_fraction,
     }
 
 # ─────────────────────────────────────────────────────────────
@@ -163,31 +175,29 @@ def motor_constants(mag, N_turns, L_axial, D_core, wire_dia):
     B_gap   = mag["B_gap"]
     R_core  = D_core / 2
 
-    # Commutation factor: 2-pole brush motor — active conductors at any time
-    p_comm  = 1.0
+    commutation_factor = 0.85           # matches analysis.py
 
-    # Torque constant  Kt = N * B * l_active * r_core * commutation
-    l_active = L_axial
-    Kt = N_turns * B_gap * l_active * R_core * p_comm
+    # Torque/back-EMF constant: Kt = comm * N * B_gap * A_coil
+    A_coil  = D_core * L_axial          # rectangular coil area (analysis.py)
+    Kt = commutation_factor * N_turns * B_gap * A_coil
 
     # Back-EMF constant = Kt in SI
     Ke = Kt
 
-    # Coil resistance  — wire area determines resistance
+    # Coil resistance
     rho_Cu  = 1.72e-8                   # resistivity of copper [Ω·m]
     A_wire  = np.pi * (wire_dia / 2)**2  # wire cross-section [m²]
-    # Mean turn length ≈ π * D_core + 2 * L_axial
-    l_turn  = np.pi * D_core + 2 * L_axial
+    # Mean turn length = 2 * (π * R_core + L_axial)  (analysis.py)
+    l_turn  = 2.0 * (np.pi * R_core + L_axial)
     l_total = N_turns * l_turn
-    R_coil  = rho_Cu * l_total / A_wire   # [Ω]  — increases as wire gets thinner
+    R_coil  = rho_Cu * l_total / A_wire
 
-    # Coil inductance (very rough: air-core approximation)
-    mu0 = MU0
-    A_coil = np.pi * R_core**2
-    L_coil = mu0 * N_turns**2 * A_coil / (L_axial + 1e-9)
+    # Coil inductance: air-gap based (analysis.py), capped to [1e-6, 0.05] H
+    L_airgap = MU0 * N_turns**2 * mag["A_gap"] / max(mag["g"], 1e-6)
+    L_coil   = float(np.clip(L_airgap, 1e-6, 0.05))
 
     # Rotor inertia  J = 0.5 * m * r²  (solid steel cylinder)
-    rho_steel = 7800                    # [kg/m³]
+    rho_steel = 7850                    # [kg/m³]  (= DENSITY_STEEL)
     m_rotor   = rho_steel * np.pi * R_core**2 * L_axial
     J_rotor   = 0.5 * m_rotor * R_core**2
 
@@ -222,8 +232,8 @@ def simulate(_, const, V_drive, mag, lam_thickness, N_turns, f1=50.0):
     # pre-compute eddy-current loss coefficient (per unit volume, per rad/s)
     # P_eddy = (π² * σ * d² * B² * f²) / 6   [W/m³]
     # We evaluate per time-step with instantaneous f = ω * p / (2π), p=1 pair
-    rho_steel = 1.0 / (2.0e6)          # electrical resistivity of steel [Ω·m]
-    V_core    = A_core * l_core         # rotor iron volume [m³]
+    rho_steel = 4.7e-7                  # electrical resistivity of steel [Ω·m]  (= RHO_STEEL_ELECTRICAL)
+    V_core    = mag["V_core"]           # actual cylinder volume π·r²·L  [m³]
 
     t_arr   = np.arange(0, T_END, DT)
     n_steps = len(t_arr)
@@ -680,58 +690,150 @@ def run_one(mat_no, L_axial_mm, D_core_mm, N_turns, wire_dia_mm,
     return ss, mag, const, res, params
 
 # ─────────────────────────────────────────────────────────────
-#  PARAMETER SENSITIVITY SWEEP
+#  PARAMETER SENSITIVITY SWEEP  (full-range, per-parameter subplots)
 # ─────────────────────────────────────────────────────────────
+_TURNS_CHOICES = [10, 20, 40, 60, 80, 100, 150, 200]
+
 def run_sensitivity(base_args):
-    """Vary each parameter ±25% and report effect on P_out and eta."""
+    """
+    Sweep each parameter across its full valid range (12 points each,
+    discrete for turns).  Produces sensitivity_sweep.png with 6 subplots
+    (one per parameter) and sensitivity_analysis.csv.
+    """
     mat_no, L_mm, D_mm, N, wd_mm, lt_mm, V = base_args
     base_ss, *_ = run_one(*base_args, label="base", verbose=False)
-    P0  = base_ss["P_out"]
-    e0  = base_ss["eta"]
+    P0 = base_ss["P_out"]
+    e0 = base_ss["eta"]
 
-    sweep_params = {
-        "axial_depth_mm":      (L_mm,  [L_mm*0.75, L_mm*1.25]),
-        "core_diameter_mm":    (D_mm,  [D_mm*0.75, min(D_mm*1.25, (D_BORE/1e-3)/2 - 0.6)]),
-        "turns":               (N,     [int(N*0.75), int(N*1.25)]),
-        "wire_dia_mm":         (wd_mm, [wd_mm*0.75, wd_mm*1.25]),
-        "lam_thickness_mm":    (lt_mm, [lt_mm*0.5,  lt_mm*2.0]),
-        "voltage":             (V,     [V*0.75,      V*1.25]),
-    }
+    max_core = (D_BORE - 2 * G_MIN) * 1e3   # mm
+
+    sweep_defs = [
+        ("axial_depth_mm",   L_mm,  np.linspace(10,  150, 12), None),
+        ("core_diameter_mm", D_mm,  np.linspace(5,   max_core, 12), None),
+        ("turns",            N,     None, _TURNS_CHOICES),
+        ("wire_dia_mm",      wd_mm, np.linspace(0.1, 5.0, 12), None),
+        ("lam_thickness_mm", lt_mm, np.geomspace(0.05, 2.0, 10), None),
+        ("voltage",          V,     np.linspace(3,   200, 12), None),
+    ]
+    param_order = [s[0] for s in sweep_defs]
 
     print("\n" + "="*72)
-    print("  PARAMETER SENSITIVITY  (±25 % from base, except lam ±50 %)")
+    print("  PARAMETER SENSITIVITY  (full-range sweep)")
     print("="*72)
     print(f"  Base: P_fan = {P0*1e3:.3f} mW,  η = {e0*100:.2f} %")
     print("-"*72)
-    fmt = "  {:22s}  {:>10s}  P_fan={:>8.3f} mW  η={:>6.2f}%  ΔP={:+.1f}%"
 
-    param_order = ["axial_depth_mm","core_diameter_mm","turns",
-                   "wire_dia_mm","lam_thickness_mm","voltage"]
-    rows_sens = []
-    for pname, (base_val, vals) in sweep_params.items():
-        for v in vals:
+    all_rows = []
+    sweep_data = {}   # pname → (values, P_fan_list, eta_list)
+
+    for pname, base_val, linvals, discvals in sweep_defs:
+        values  = discvals if discvals is not None else linvals
+        P_list, eta_list = [], []
+        idx_in_args = param_order.index(pname) + 1  # +1: mat_no is args[0]
+
+        for v in values:
             args = list(base_args)
-            idx  = param_order.index(pname) + 1   # +1: mat_no is args[0]
-            args[idx] = int(v) if pname == "turns" else float(v)
+            args[idx_in_args] = int(v) if pname == "turns" else float(v)
             try:
-                ss, *_ = run_one(*args, label=f"sens_{pname}_{v:.2f}", verbose=False)
-                delta = (ss["P_out"] - P0) / (P0 + 1e-12) * 100
-                direction = "↑" if v > base_val else "↓"
-                print(fmt.format(f"{pname} {direction}{abs((v-base_val)/base_val)*100:.0f}%",
-                                 f"{v:.2f}",
-                                 ss["P_out"]*1e3, ss["eta"]*100, delta))
-                rows_sens.append([pname, v, ss["P_out"]*1e3, ss["eta"]*100, delta])
-            except ValueError as e:
-                print(f"  {pname}={v:.2f}  SKIPPED ({e})")
+                ss, *_ = run_one(*args, label="sens", verbose=False)
+                P_list.append(ss["P_out"] * 1e3)
+                eta_list.append(ss["eta"] * 100)
+                all_rows.append([pname, float(v),
+                                  ss["P_out"]*1e3, ss["eta"]*100,
+                                  (ss["P_out"]-P0)/(P0+1e-12)*100])
+            except ValueError:
+                P_list.append(float("nan"))
+                eta_list.append(float("nan"))
 
-    # Save sensitivity table
+        sweep_data[pname] = (list(values), P_list, eta_list)
+        n_ok = len([p for p in P_list if not np.isnan(p)])
+        print(f"  {pname:22s}: {n_ok} points OK")
+
+    # Save CSV
     sens_path = os.path.join(OUT_DIR, "sensitivity_analysis.csv")
     with open(sens_path, "w", newline="") as f:
         wtr = csv.writer(f)
         wtr.writerow(["parameter","value","P_fan_mW","efficiency_%","delta_P_%"])
-        for r in rows_sens:
+        for r in all_rows:
             wtr.writerow(r)
     print(f"\n  → Sensitivity table saved: {sens_path}")
+
+    _plot_sensitivity_subplots(sweep_data, base_args, P0, e0)
+
+
+def _plot_sensitivity_subplots(sweep_data, base_args, P0, e0):
+    """3×2 grid: one subplot per parameter, dual y-axis (P_fan left, η right)."""
+    mat_no, L_mm, D_mm, N, wd_mm, lt_mm, V = base_args
+    base_vals = {
+        "axial_depth_mm":   L_mm,
+        "core_diameter_mm": D_mm,
+        "turns":            N,
+        "wire_dia_mm":      wd_mm,
+        "lam_thickness_mm": lt_mm,
+        "voltage":          V,
+    }
+    titles = {
+        "axial_depth_mm":   "Axial Depth (mm)",
+        "core_diameter_mm": "Core Diameter (mm)",
+        "turns":            "Coil Turns",
+        "wire_dia_mm":      "Wire Diameter (mm)",
+        "lam_thickness_mm": "Lamination Thickness (mm)",
+        "voltage":          "Supply Voltage (V)",
+    }
+
+    C_P   = "#2196F3"   # blue  – P_fan
+    C_ETA = "#E91E63"   # pink  – efficiency
+    C_BASE= "#FF9800"   # orange – base design marker
+
+    fig, axes = plt.subplots(2, 3, figsize=(14, 8))
+    fig.patch.set_facecolor("#F8F9FA")
+    fig.suptitle("Parameter Sensitivity — Full Range Sweep",
+                 fontsize=13, fontweight="bold", y=0.98)
+
+    for ax, (pname, (vals, P_list, eta_list)) in zip(axes.flat, sweep_data.items()):
+        vals     = np.array(vals, dtype=float)
+        P_arr    = np.array(P_list, dtype=float)
+        eta_arr  = np.array(eta_list, dtype=float)
+        base_v   = base_vals[pname]
+
+        ax.set_facecolor("white")
+        ax.set_title(titles[pname], fontsize=9, fontweight="semibold", pad=5)
+        ax.set_xlabel(titles[pname].split("(")[0].strip(), fontsize=8)
+        ax.grid(True, color="#E0E0E0", linewidth=0.5, zorder=0)
+        ax.spines[["top", "right"]].set_visible(False)
+
+        # P_fan on left axis
+        mask = ~np.isnan(P_arr)
+        ax.plot(vals[mask], P_arr[mask], color=C_P, linewidth=2.0,
+                marker="o", markersize=4, zorder=3, label="P_fan (mW)")
+        ax.set_ylabel("P_fan (mW)", color=C_P, fontsize=8)
+        ax.tick_params(axis="y", labelcolor=C_P, labelsize=7)
+
+        # η on right axis
+        ax2 = ax.twinx()
+        ax2.plot(vals[mask], eta_arr[mask], color=C_ETA, linewidth=1.8,
+                 linestyle="--", marker="s", markersize=3, zorder=3, label="η (%)")
+        ax2.set_ylabel("Efficiency (%)", color=C_ETA, fontsize=8)
+        ax2.tick_params(axis="y", labelcolor=C_ETA, labelsize=7)
+        ax2.spines["right"].set_color(C_ETA)
+
+        # Base design marker
+        ax.axvline(base_v, color=C_BASE, linewidth=1.4, linestyle=":", zorder=4)
+        ylim = ax.get_ylim()
+        ax.text(base_v, ylim[1], f" base\n {base_v:.3g}",
+                color=C_BASE, fontsize=7, va="top", ha="left")
+
+        # Use log x-scale for lamination thickness
+        if pname == "lam_thickness_mm":
+            ax.set_xscale("log")
+
+        ax.tick_params(axis="x", labelsize=7)
+
+    fig.tight_layout(rect=[0, 0, 1, 0.96])
+    path = os.path.join(OUT_DIR, "sensitivity_sweep.png")
+    fig.savefig(path, dpi=160, facecolor=fig.get_facecolor())
+    plt.close()
+    print(f"  → Sensitivity plot saved: {path}")
 
 # ─────────────────────────────────────────────────────────────
 #  MAIN

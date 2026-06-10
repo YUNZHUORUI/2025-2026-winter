@@ -1,11 +1,12 @@
 % ============================================================
-%  Permanent-Magnet Brushed DC Motor Simulation Report
-%  Single-column journal style (IEEE/Elsevier inspired)
+%  Permanent-Magnet Brushed DC Motor — Prototype & Simulation
+%  Double-column research paper format
 % ============================================================
-\documentclass[12pt, a4paper]{article}
+\documentclass[10pt, twocolumn, a4paper]{article}
 
 % ---- core packages ----------------------------------------------------------
-\usepackage[a4paper, top=25mm, bottom=25mm, left=30mm, right=30mm]{geometry}
+\usepackage[a4paper, top=19mm, bottom=22mm, left=14mm, right=14mm,
+            columnsep=6mm]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
@@ -25,35 +26,35 @@
 \usepackage{float}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{dblfloatfix}   % correct placement of full-width floats in twocolumn
 
 % ---- layout -----------------------------------------------------------------
 \usepackage{parskip}
-\usepackage{setspace}
 \usepackage{enumitem}
 \usepackage{fancyhdr}
 \usepackage{titlesec}
 \usepackage[hidelinks]{hyperref}
+\usepackage{balance}       % balance columns on last page
 
-% ---- section formatting (classic journal, no colour) ------------------------
+% ---- section formatting (IEEE-style) ----------------------------------------
 \titleformat{\section}
-  {\normalfont\large\bfseries}{\thesection.}{0.6em}{}
+  {\normalfont\normalsize\bfseries\centering}{\Roman{section}.}{0.5em}{\MakeUppercase}
 \titleformat{\subsection}
-  {\normalfont\normalsize\bfseries}{\thesubsection}{0.6em}{}
+  {\normalfont\normalsize\itshape}{\Alph{subsection}.}{0.4em}{}
 \titleformat{\subsubsection}
-  {\normalfont\normalsize\itshape}{\thesubsubsection}{0.6em}{}
-\titlespacing{\section}{0pt}{14pt}{4pt}
-\titlespacing{\subsection}{0pt}{8pt}{2pt}
-\titlespacing{\subsubsection}{0pt}{6pt}{1pt}
+  {\normalfont\normalsize\itshape}{\arabic{subsubsection})}{0.4em}{}
+\titlespacing{\section}{0pt}{8pt}{3pt}
+\titlespacing{\subsection}{0pt}{5pt}{1pt}
+\titlespacing{\subsubsection}{0pt}{4pt}{1pt}
 
 % ---- caption styling --------------------------------------------------------
-\captionsetup{font=small, labelfont=bf, labelsep=period,
-              width=0.92\linewidth, skip=5pt}
+\captionsetup{font=small, labelfont=bf, labelsep=period, skip=4pt}
 
 % ---- header / footer --------------------------------------------------------
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\small\itshape PM Brushed DC Motor: Prototype \& Simulation}
-\fancyhead[R]{\small\itshape Motor Design Report}
+\fancyhead[C]{\small\itshape
+  PM Brushed DC Motor: Physical Prototype and Simulation Study}
 \fancyfoot[C]{\small\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0pt}
@@ -63,53 +64,50 @@
 \newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{6pt}
+\setlength{\parindent}{1em}
+\setlength{\parskip}{2pt}
 
 % ============================================================
 \begin{document}
 % ============================================================
 
-% ---- title block ------------------------------------------------------------
+% ---- title block (spans both columns via twocolumn[\...]) -------------------
+\twocolumn[{%
 \begin{center}
-  {\LARGE\bfseries Permanent-Magnet Brushed DC Motor:\\[4pt]
-   Physical Prototype, Simulation, Loss Analysis, and Design Optimisation}\\[10pt]
-  {\normalsize\bfseries Zhuorui YUN}\\[3pt]
-  {\small Department of Mechanical Engineering and Robotics}\\[2pt]
-  {\small\ttfamily yun24239@gtiit.edu.cn}\\[10pt]
-  {\small\itshape Physical prototype built from a disassembled KIT-160MT30 motor
-   with a SolidWorks-designed, 3D-printed outer casing}\\[4pt]
-  {\small \today}
+  {\large\bfseries Permanent-Magnet Brushed DC Motor:\\[3pt]
+   Physical Prototype, Simulation, and Design Optimisation}\\[8pt]
+  {\normalsize Zhuorui YUN}\\[2pt]
+  {\small Department of Mechanical Engineering and Robotics,
+   Guangdong Technion Israel Institute of Technology}\\[1pt]
+  {\small\ttfamily yun24239@gtiit.edu.cn \quad \today}
 \end{center}
 \vspace{4pt}
-\noindent\rule{\linewidth}{0.6pt}
+\noindent\rule{\linewidth}{0.6pt}\vspace{2pt}
 
-% ---- abstract ---------------------------------------------------------------
 \begin{center}
-\begin{minipage}{0.92\linewidth}
-\small\textbf{Abstract.}\quad
-This report documents the physical construction and simulation of a
-permanent-magnet (PM) brushed DC motor. The physical prototype was built by
-disassembling a KIT-160MT30 (06-4930) brushed DC motor to extract the wound
-rotor, permanent magnets, and brush assembly; a custom outer housing was
-designed in SolidWorks and fabricated by FDM 3D printing. The report first
-presents the design rationale for this hybrid approach---including why a
-fully 3D-printed rotor was abandoned due to excessive magnetic reluctance---
-and compares the resulting prototype with alternative all-printed designs.
-The second part documents the simulation, parameter study, and design
-optimisation of the motor driving a fan load. A time-domain model
-integrating coupled electrical and mechanical ordinary differential
-equations is implemented in Python. The magnetic circuit employs a
-nonlinear laminated-steel B--H curve to capture core saturation. Six
-candidate designs are evaluated and a sensitivity study quantifies the
-influence of each parameter on fan output power and efficiency.
+\begin{minipage}{0.96\linewidth}
+\small\textbf{Abstract---}%
+This paper documents the physical construction and simulation of a
+permanent-magnet (PM) brushed DC motor.
+The physical prototype was built by disassembling a KIT-160MT30 brushed DC
+motor to extract the wound rotor, ferrite magnets, and brush assembly;
+a custom outer housing was designed in SolidWorks and produced by FDM 3D
+printing. The hybrid approach is justified through magnetic circuit analysis:
+a non-magnetic 3D-printed rotor ($\mu_r \approx 1$) doubles the total
+reluctance and halves $B_\text{gap}$, making self-starting impossible.
+The simulation part develops a low-order lumped-parameter model integrating
+coupled electrical and mechanical ODEs with a nonlinear M19 steel B--H curve.
+A sweep of 1\,400 parameter combinations identifies the globally optimal
+design, which achieves \SI{92.26}{\percent} steady-state efficiency at
+\SI{46\,308}{rpm} under a \SI{200}{V} supply.
+
+\smallskip
+\noindent\textit{Keywords---}permanent-magnet brushed DC motor; reluctance
+model; efficiency optimisation; 3D printing; FDM prototype.
 \end{minipage}
 \end{center}
-\noindent\rule{\linewidth}{0.4pt}
-\vspace{4pt}
-
-\tableofcontents
-\newpage
+\vspace{2pt}\noindent\rule{\linewidth}{0.4pt}\vspace{6pt}
+}]
 
 % ============================================================
 \section{Physical Motor Design and Prototype}
@@ -237,14 +235,14 @@ Discussion with classmates who pursued fully 3D-printed prototypes revealed
 several qualitative differences, summarised in
 Table~\ref{tab:design_compare}.
 
-\begin{table}[H]
+\begin{table*}[t]
   \centering
   \caption{Qualitative comparison between the self-designed hybrid
            prototype and a typical fully 3D-printed design.}
   \label{tab:design_compare}
   \small
   \setlength{\tabcolsep}{6pt}
-  \begin{tabular}{@{} l p{5.2cm} p{5.2cm} @{}}
+  \begin{tabular}{@{} l p{6cm} p{6cm} @{}}
     \toprule
     \textbf{Aspect} & \textbf{This prototype (hybrid)} &
     \textbf{Fully 3D-printed design} \\
@@ -275,7 +273,7 @@ Table~\ref{tab:design_compare}.
       Entire machine designed from scratch \\
     \bottomrule
   \end{tabular}
-\end{table}
+\end{table*}
 
 The key advantage of the hybrid approach is that the magnetic circuit is
 \emph{physically correct}: a laminated steel core with $\mu_r \gg 1$ keeps
@@ -326,11 +324,13 @@ simulation---covering the magnetic circuit, motor dynamics, and all major
 loss mechanisms---is used to explore the design space systematically.
 
 The simulation report is organised as follows.
-Section~\ref{sec:model} describes the mathematical model.
-Section~\ref{sec:results} presents the results for all six designs.
+Section~\ref{sec:model} describes the mathematical model and fixed geometry.
+Section~\ref{sec:optim} presents the globally optimised design and its
+physical rationale.
+Section~\ref{sec:results} shows the time-domain simulation results.
 Section~\ref{sec:saturation} analyses steel saturation.
 Section~\ref{sec:sensitivity} examines parameter sensitivity.
-Section~\ref{sec:rec} gives the final design recommendations.
+Section~\ref{sec:rec} gives the final design recommendation.
 
 % ============================================================
 \section{Simulation Model}
@@ -339,14 +339,27 @@ Section~\ref{sec:rec} gives the final design recommendations.
 
 \subsection{Geometry and Constraints}
 
-The motor has a fixed square permanent-magnet shell with a circular inner
-bore of diameter $D_\text{bore} = \SI{12}{mm}$. The laminated steel rotor
-is a solid cylinder on a horizontal shaft. The radial air gap is
+The simulation models a square-outside, round-inside permanent-magnet motor,
+illustrated in Fig.~\ref{fig:3d}.
+The magnet outer side and bore diameter are both fixed at
+$D_\text{bore} = \SI{40}{mm}$ (square side \SI{40}{mm}). The laminated steel
+rotor is a solid cylinder on a horizontal shaft. The radial air gap is
 \begin{equation}
   g = \frac{D_\text{bore} - D_\text{core}}{2},
 \end{equation}
 subject to the manufacturing constraint $g \geq g_\text{min} = \SI{0.5}{mm}$,
-so the maximum permissible core diameter is $D_\text{core,max} = \SI{11}{mm}$.
+so the maximum permissible core diameter is $D_\text{core,max} = \SI{39}{mm}$.
+The axial depth $L$ is a free parameter in the range \SIrange{2}{150}{mm}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Figure/motor_3d_configuration.png}
+  \caption{3D geometry of the simulated motor. Red/blue: N/S pole halves of
+    the square permanent-magnet shell. Magenta: laminated steel rotor.
+    Yellow: shaft, rotation arrow, and fan blades.
+    Green arrows: flux path through core; yellow arrows: radial air-gap flux.}
+  \label{fig:3d}
+\end{figure}
 
 \subsection{Magnetic Circuit}
 
@@ -377,6 +390,41 @@ $B_\text{core}$, yielding an effective relative permeability
 \end{equation}
 which collapses sharply once the material enters saturation.
 
+\subsection{Working Principle and Commutation}
+
+Figure~\ref{fig:commutation} shows the cross-section of the motor at two
+instants separated by a commutation event.  The active conductors sit in
+the left and right positions, where the radial flux $\vec{B}$ is
+perpendicular to the conductor axis.  The Lorentz force on each conductor
+is tangential:
+\begin{equation}
+  F = BIL,
+  \label{eq:BIL}
+\end{equation}
+and the resulting torque about the shaft axis is
+\begin{equation}
+  \tau = F \cdot l,
+  \label{eq:tau}
+\end{equation}
+where $l$ is the moment arm (rotor radius at the conductor).  After the
+coil rotates through the neutral plane, the commutator reverses the current
+in each conductor, ensuring that the force---and hence the torque---always
+acts in the same rotational direction.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Figure/flux_current_force_torque.png}
+  \caption{Commutation principle (cross-section, shaft axis into page).
+    \textit{Left:} before switch --- conductor $\odot$ (current out) on
+    the left produces upward force; conductor $\otimes$ (current in) on
+    the right produces downward force; both contribute CCW torque
+    $\tau = F{\cdot}l$.
+    \textit{Right:} after commutation --- brush polarity reverses,
+    forces remain tangential and in the same sense, maintaining CCW
+    torque.}
+  \label{fig:commutation}
+\end{figure}
+
 \subsection{Motor Constants}
 
 For a PM brushed DC motor, the torque constant and back-EMF constant are
@@ -399,7 +447,7 @@ The rotor inertia for a solid steel cylinder is $J = \tfrac{1}{2}m_r r_c^2$.
 \subsection{Equations of Motion}
 
 The electrical and mechanical equations are integrated by the forward-Euler
-method ($\Delta t = \SI{0.1}{ms}$, total duration \SI{0.5}{s}):
+method ($\Delta t = \SI{0.1}{ms}$, total duration \SI{2.0}{s}):
 \begin{align}
   L \frac{dI}{dt} &= V - R_\text{coil}\,I - K_e\,\omega,
   \label{eq:elec}\\[4pt]
@@ -409,9 +457,11 @@ method ($\Delta t = \SI{0.1}{ms}$, total duration \SI{0.5}{s}):
   \label{eq:mech}
 \end{align}
 The fan load torque is $\tau_\text{fan} = k_\text{fan}\,\omega^2$ with
-$k_\text{fan} = \SI{2e-8}{N\,m\,s^2/rad^2}$,
+$k_\text{fan} = \SI{1e-7}{N\,m\,s^2/rad^2}$,
 viscous damping $b = \SI{2e-5}{N\,m\,s/rad}$, and Coulomb friction
 $T_\text{fric} = \SI{3e-4}{N\,m}$.
+Steady-state values are averaged over the final 20\,\% of the run
+(t = \SIrange{1.6}{2.0}{s}).
 
 \subsection{Loss Models}
 
@@ -423,7 +473,7 @@ All loss terms are evaluated at each integration step:
     \frac{\pi^2 \delta^2 f_e^2 B_\text{core}^2 V_\text{core}}
          {6\,\rho_\text{Fe}},
   \label{eq:Peddy}\\
-  P_\text{hyst}   &= K_h |B_\text{core}|^\alpha f_e V_\text{core},
+  P_\text{hyst}   &= K_h |B_\text{core}|^\alpha f_e V_\text{core},\quad \alpha=1.7,
   \label{eq:Physt}\\
   P_\text{mech}   &= \bigl(b\,\omega + T_\text{fric}\bigr)|\omega|,
   \label{eq:Pmech}\\
@@ -436,80 +486,167 @@ iron volume. Overall efficiency is $\eta = P_\text{fan}/P_\text{in}$.
 Steady-state values are averaged over the final 20\,\% of the simulation.
 
 % ============================================================
-\section{Candidate Designs and Results}
-\label{sec:results}
+\section{Optimised Design}
+\label{sec:optim}
 % ============================================================
 
-\subsection{Design Matrix}
+\subsection{Optimisation Strategy}
 
-Six designs spanning a range of magnet materials, geometries, and voltages
-are evaluated. Table~\ref{tab:designs} lists the tunable input parameters.
-The bore diameter and minimum air gap are fixed for all cases.
+A sweep of 1\,400 parameter combinations is performed to maximise
+steady-state efficiency driving a quadratic fan load.  At steady state
+the efficiency ceiling is
+\begin{equation}
+  \eta_\text{ss} \approx \frac{K_e\,\omega}{V}
+                        = \frac{\text{back-EMF}}{V},
+  \label{eq:etass}
+\end{equation}
+so the four independent levers are: (i)~maximise $K_t = K_e$ via strong
+magnets and large active volume; (ii)~minimise $R_\text{coil}$ via thick
+wire; (iii)~minimise eddy-current loss via thin laminations; and
+(iv)~raise $V$ to push the operating point toward the back-EMF ceiling.
+
+\subsection{Globally Optimal Parameters}
+
+Table~\ref{tab:optim} lists the globally optimal parameter set.
 
 \begin{table}[H]
   \centering
-  \caption{Input parameters for the six candidate designs.
-           All designs share $D_\text{core} = \SI{10}{mm}$,
-           $g = \SI{1.0}{mm}$.}
-  \label{tab:designs}
+  \caption{Globally optimal design.
+           Input string: \texttt{1,\,150,\,39.0,\,200,\,5.00,\,0.050,\,200}.}
+  \label{tab:optim}
   \small
   \setlength{\tabcolsep}{6pt}
-  \begin{tabular}{@{} L{3.6cm} L{2.2cm} C{1.3cm} C{1.0cm}
-                       C{1.2cm} C{1.2cm} C{1.0cm} @{}}
+  \begin{tabular}{@{} L{2.8cm} C{1.8cm} C{1.8cm} @{}}
     \toprule
-    \textbf{Label} & \textbf{Magnet} &
-    $L_\text{ax}$ (mm) & $N$ & $d_w$ (mm) & $\delta$ (mm) & $V$ (V) \\
+    \textbf{Parameter} & \textbf{Symbol} & \textbf{Value} \\
     \midrule
-    D1: Base (Ferrite)        & Ferrite C8 & 12 & 45 & 0.15 & 0.50 & 3.0 \\
-    D2: High Power            & NdFeB N52  & 20 & 30 & 0.20 & 0.50 & 3.0 \\
-    D3: High Efficiency       & NdFeB N52  & 15 & 25 & 0.25 & 0.30 & 3.0 \\
-    D4: Ferrite Large         & Ferrite C8 & 20 & 30 & 0.20 & 0.50 & 3.0 \\
-    D5: High Voltage (4.5\,V) & NdFeB N52  & 12 & 45 & 0.15 & 0.50 & 4.5 \\
-    D6: Thin Lam (0.2\,mm)   & NdFeB N52  & 12 & 45 & 0.15 & 0.20 & 3.0 \\
+    Magnet material      & ---             & NdFeB N52 \\
+    Axial depth          & $L$             & \SI{150}{mm} \\
+    Iron-core diameter   & $d_\text{core}$ & \SI{39}{mm} \\
+    Coil turns           & $N$             & 200 \\
+    Wire diameter        & $d_w$           & \SI{5.00}{mm} \\
+    Lamination thickness & $\delta$        & \SI{0.050}{mm} \\
+    Supply voltage       & $V$             & \SI{200}{V} \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-\subsection{Steady-State Performance}
+\subsection{Magnetic Circuit Results}
 
-Table~\ref{tab:results} compares all six designs at steady state. Designs
-D2 and D6 achieve the highest fan output power and efficiency respectively.
+Table~\ref{tab:mag} shows the reluctance-model output.  The return-path
+reluctance $\mathcal{R}_\text{return} = \SI{4.94e6}{A/Wb}$ dominates the
+circuit because the square outer shell provides a long flux path with no
+dedicated iron yoke.  As a result $B_\text{gap} = \SI{0.0305}{T}$, well
+below the saturation knee; the core operates at $\mu_{r,\text{eff}} \approx 3\,979$.
 
 \begin{table}[H]
   \centering
-  \caption{Steady-state simulation results.
-           Underlined entries are the best value in each column.}
-  \label{tab:results}
+  \caption{Reluctance model for the optimised geometry.}
+  \label{tab:mag}
   \small
-  \setlength{\tabcolsep}{5pt}
-  \begin{tabular}{@{} l
-                     R{1.5cm} R{1.5cm} R{1.5cm}
-                     R{2.0cm} R{1.6cm} R{1.4cm} @{}}
+  \setlength{\tabcolsep}{6pt}
+  \begin{tabular}{@{} L{3.2cm} r @{}}
     \toprule
-    \textbf{Design} &
-    $n$ (RPM) & $I$ (mA) & $\varepsilon$ (V) &
-    $P_\text{fan}$ (mW) & $P_\text{in}$ (W) & $\eta$ (\%) \\
+    \textbf{Quantity} & \textbf{Value} \\
     \midrule
-    D1: Ferrite base    & 1\,281 & 8\,856 & 0.051 & 48.3 & 26.6 & 0.04 \\
-    D2: High Power      & \underline{7\,000} & 25\,573 & 0.737
-                        & \underline{7\,878} & 76.7 & 2.54 \\
-    D3: High Efficiency & 5\,880 & 31\,788 & 0.391 & 4\,668 & 95.4 & 1.21 \\
-    D4: Ferrite Large   & 4\,278 & 31\,681 & 0.188 & 1\,798 & 95.0 & 0.47 \\
-    D5: HV 4.5\,V       & 4\,990 & 11\,297 & 0.750 & 2\,853 & 50.8 & 1.38 \\
-    D6: Thin Lam        & 3\,588 & 7\,413 & 0.539 & 1\,061 & 22.2
-                        & \underline{2.54}$^{*}$ \\
+    Magnet MMF $\mathcal{F}_\text{pm}$     & \SI{2334}{A-turn} \\
+    $\mathcal{R}_\text{mag}$               & \SI{112945}{A/Wb} \\
+    $\mathcal{R}_\text{gap}$               & \SI{26402}{A/Wb} \\
+    $\mathcal{R}_\text{core}$              & \SI{2094}{A/Wb} \\
+    $\mathcal{R}_\text{return}$            & \SI{4942497}{A/Wb} \\
+    $\mathcal{R}_\text{total}$             & \SI{5083939}{A/Wb} \\
+    Air-gap flux $\phi$                    & \SI{0.459}{mWb} \\
+    $B_\text{gap}$                         & \SI{0.0305}{T} \\
+    $B_\text{core}$                        & \SI{0.0785}{T} \\
+    $\mu_{r,\text{eff}}$                   & 3\,979 \\
     \bottomrule
-    \multicolumn{7}{@{}l@{}}{\footnotesize
-      $^{*}$D2 and D6 share the same rounded value; D6 operates at far
-      lower current and thermal load.}
+  \end{tabular}
+\end{table}
+
+\subsection{Motor Electrical and Mechanical Constants}
+
+\begin{table}[H]
+  \centering
+  \caption{Computed motor constants for the optimised design.}
+  \label{tab:motorconst}
+  \small
+  \setlength{\tabcolsep}{6pt}
+  \begin{tabular}{@{} L{3.2cm} r @{}}
+    \toprule
+    \textbf{Quantity} & \textbf{Value} \\
+    \midrule
+    Coil resistance $R_\text{coil}$  & \SI{0.0742}{\ohm} \\
+    Coil inductance $L$              & \SI{0.05}{H} (capped) \\
+    Torque constant $K_t$            & \SI{0.03030}{N\,m/A} \\
+    Back-EMF constant $K_e$          & \SI{0.03030}{V\,s/rad} \\
+    Rotor inertia $J$                & \SI{2.674e-4}{kg\,m^2} \\
+    Wire length                      & \SI{84.5}{m} \\
+    Current limit $I_\text{lim}$     & \SI{117.8}{A} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% ============================================================
+\section{Simulation Results}
+\label{sec:results}
+% ============================================================
+
+\subsection{Time-Domain Behaviour}
+
+The motor accelerates from rest and approaches steady state by
+$t \approx \SI{0.5}{s}$.
+Figure~\ref{fig:speed} shows the rotor speed transient; the current peaks
+sharply at startup then falls as back-EMF builds (Fig.~\ref{fig:iemf}).
+Figure~\ref{fig:dashboard} shows the full six-panel overview.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Figure/rotation_speed_time.png}
+  \caption{Rotor speed vs.\ time. Steady-state: \SI{46\,308}{rpm}.}
+  \label{fig:speed}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Figure/back_emf_current_time.png}
+  \caption{Armature current (top) and back-EMF (bottom) vs.\ time.
+    Current peaks at startup then settles to \SI{80.8}{A};
+    back-EMF converges to \SI{146.9}{V} (73.5\,\% of supply).}
+  \label{fig:iemf}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Figure/fan_work_output_demo.png}
+  \caption{Cumulative fan work and equivalent lift height for
+    \SI{0.25}{kg}. Total work at $t=\SI{2}{s}$: \SI{18\,657}{J}.}
+  \label{fig:fanwork}
+\end{figure}
+
+\subsection{Steady-State Performance}
+
+\begin{table}[H]
+  \centering
+  \caption{Steady-state results at $t = \SI{2.0}{s}$.}
+  \label{tab:results}
+
+  \small
+  \setlength{\tabcolsep}{6pt}
+  \begin{tabular}{@{} L{3.5cm} r @{}}
+    \toprule
+    \textbf{Quantity} & \textbf{Value} \\
+    \midrule
+    Rotor speed           & \SI{46308}{rpm} \\
+    Armature current      & \SI{80.83}{A} \\
+    Back-EMF              & \SI{146.93}{V}\;(73.5\,\% of supply) \\
+    Input power           & \SI{16165}{W} \\
+    Fan output power      & \SI{11404}{W} \\
+    \textbf{Efficiency}   & \textbf{92.26\,\%} \\
+    \bottomrule
   \end{tabular}
 \end{table}
 
 \subsection{Loss Breakdown}
-
-Table~\ref{tab:losses} details the steady-state loss components.
-Copper loss dominates in all cases. Iron losses are visible only in D2
-at high speed.
 
 \begin{table}[H]
   \centering
@@ -517,62 +654,56 @@ at high speed.
   \label{tab:losses}
   \small
   \setlength{\tabcolsep}{6pt}
-  \begin{tabular}{@{} l R{2.2cm} R{2.0cm} R{2.0cm} R{2.2cm} @{}}
+  \begin{tabular}{@{} L{2.6cm} R{1.6cm} R{1.6cm} @{}}
     \toprule
-    \textbf{Design} &
-    $P_\text{copper}$ (W) & $P_\text{eddy}$ (mW) &
-    $P_\text{hyst}$ (mW) & $P_\text{mech}$ (mW) \\
+    \textbf{Loss term} & \textbf{Power (W)} & \textbf{Share (\%)} \\
     \midrule
-    D1: Ferrite base    & 380.7 &  0.04 &  0.10 &   400 \\
-    D2: High Power      & 1\,534 & 17.87 &  6.77 & 10\,967 \\
-    D3: High Efficiency & 1\,087 &  2.61 &  3.46 &  7\,766 \\
-    D4: Ferrite Large   & 2\,355 &  1.16 &  0.86 &  4\,148 \\
-    D5: HV 4.5\,V       &   620 &  8.23 &  4.42 &  5\,616 \\
-    D6: Thin Lam        &   267 &  0.68 &  3.18 &  2\,935 \\
+    Copper              & 484.7  & 50.7 \\
+    Mechanical friction & 471.8  & 49.3 \\
+    Eddy-current        & 0.006  & $<0.1$ \\
+    Hysteresis          & 0.15   & $<0.1$ \\
+    \midrule
+    \textbf{Total}      & \textbf{956.7} & 100 \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-\subsection{Simulation Dashboard Plots}
+Copper and mechanical friction losses are approximately equal.  Iron
+losses are negligible ($<\SI{0.2}{W}$) thanks to the \SI{0.05}{mm}
+laminations, confirming the optimisation strategy.
 
-Figures~\ref{fig:d1}--\ref{fig:d6} show the eight-panel simulation
-dashboards for three selected designs. Each dashboard contains: rotor
-speed, current and back-EMF, major losses (linear scale), minor losses
-(logarithmic scale), efficiency, torque, steady-state power balance bar
-chart, and cumulative fan work output.
+\subsection{Integrated Energy (0--2\,s)}
 
-\begin{figure}[H]
+\begin{table}[H]
   \centering
-  \includegraphics[width=\linewidth]{Figure/Base_Ferrite_3V_dashboard.png}
-  \caption{D1 -- Base design (Ferrite C8, $V = \SI{3.0}{V}$).
-    Low air-gap flux density ($B_\text{gap} = \SI{0.14}{T}$) and high
-    resistance produce large current but small torque constant, giving
-    $\eta = 0.04\,\%$. Copper loss dominates at \SI{381}{W}.}
-  \label{fig:d1}
-\end{figure}
+  \caption{Cumulative energy budget over the \SI{2}{s} simulation.}
+  \label{tab:energy}
+  \small
+  \setlength{\tabcolsep}{6pt}
+  \begin{tabular}{@{} L{3.4cm} r @{}}
+    \toprule
+    \textbf{Energy term} & \textbf{Value (J)} \\
+    \midrule
+    Fan work output          & 18\,657 \\
+    Copper energy loss       & 1\,249.6 \\
+    Mechanical friction loss &   797.7 \\
+    Eddy-current loss        &     0.010 \\
+    Hysteresis loss          &     0.260 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
-\begin{figure}[H]
+\begin{figure*}[t]
   \centering
-  \includegraphics[width=\linewidth]{Figure/High_Power_NdFeB_more_L_dashboard.png}
-  \caption{D2 -- High-Power design (NdFeB N52,
-    $L_\text{ax} = \SI{20}{mm}$, $N = 30$, $V = \SI{3.0}{V}$).
-    Peak fan output power of \SI{7.88}{W} at \SI{7000}{RPM}.
-    Iron losses are visible in the logarithmic loss panel (panel 4).
-    The high steady-state current (\SI{25.6}{A}) limits continuous
-    operation.}
-  \label{fig:d2}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\linewidth]{Figure/Thin_Lam_low_eddy_dashboard.png}
-  \caption{D6 -- Thin-Lamination design
-    (NdFeB N52, $\delta = \SI{0.2}{mm}$, $N = 45$, $V = \SI{3.0}{V}$).
-    Eddy-current loss is reduced by a factor of 6.25 compared with a
-    $\SI{0.5}{mm}$ lamination (same magnet and winding). Current is only
-    \SI{7.4}{A}, making this the most thermally conservative NdFeB design.}
-  \label{fig:d6}
-\end{figure}
+  \includegraphics[width=\linewidth]{Figure/motor_dashboard_2x3.png}
+  \caption{Six-panel simulation dashboard for the optimised design
+    (NdFeB N52, $L = \SI{150}{mm}$, $d_\text{core}=\SI{39}{mm}$,
+    $V = \SI{200}{V}$, $\delta = \SI{0.05}{mm}$).
+    \textit{Top row:} rotor speed, armature current, back-EMF.
+    \textit{Bottom row:} power and loss stack, efficiency, cumulative fan work.
+    Steady-state efficiency 92.26\,\% is reached by $t \approx \SI{0.8}{s}$.}
+  \label{fig:dashboard}
+\end{figure*}
 
 % ============================================================
 \section{Steel Saturation: Physical Analysis}
@@ -584,248 +715,237 @@ chart, and cumulative fan work output.
 Laminated electrical steel follows a strongly nonlinear B--H relationship.
 In the unsaturated regime ($B \lesssim \SI{1.3}{T}$) the relative
 permeability $\mu_r$ lies in the range 2000--5000. Beyond the saturation
-knee ($B \approx \SI{1.5}{T}$), $\mu_r$ collapses below 100 as the
-magnetic domains approach full alignment.
+knee ($B \approx \SI{1.5}{T}$), $\mu_r$ collapses below 100.
 
-From Eq.~\eqref{eq:reluc}, the core reluctance is
-$\mathcal{R}_\text{core} = l_c / (\mu_{r,\text{eff}}\mu_0 A_c)$.
-As $\mu_{r,\text{eff}}$ collapses, $\mathcal{R}_\text{core}$ rises and
-dominates $\mathcal{R}_\text{total}$. The air-gap flux
-$\phi = \mathcal{F}/\mathcal{R}_\text{total}$ then grows far more slowly
-than the MMF: the core becomes the magnetic bottleneck.
+For the optimised design, $B_\text{core} = \SI{0.079}{T}$, well below
+saturation.  The core operates at $\mu_{r,\text{eff}} \approx 3\,979$ and
+contributes only $\mathcal{R}_\text{core} = \SI{2094}{A/Wb}$ to the total
+reluctance of \SI{5.08e6}{A/Wb}.  The dominant term is the return-path air
+reluctance $\mathcal{R}_\text{return} = \SI{4.94e6}{A/Wb}$, which arises
+from the absence of a dedicated iron yoke in the square-shell geometry.
 
-Figure~\ref{fig:saturation} shows the B--H curve and the resulting
-effective permeability, with the operating points of three representative
-designs marked.
+Figure~\ref{fig:saturation} shows the M19 B--H curve and effective
+permeability. Although the optimised design itself does not saturate, the
+figure illustrates why any design that pushes $B_\text{core}$ above
+\SI{1.5}{T} would suffer a sharp permeability collapse.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\linewidth]{Figure/saturation_analysis.png}
-  \caption{Left: M19 laminated-steel B--H curve with design operating
-    points. Right: effective relative permeability $\mu_{r,\text{eff}}$
-    versus core flux density. The NdFeB L20 design
-    ($B_\text{core} = \SI{1.61}{T}$) operates in deep saturation
-    with $\mu_r \approx 26$, compared to $\mu_r \approx 5300$ for
-    the Ferrite design at $B_\text{core} = \SI{0.40}{T}$.}
+  \caption{M19 laminated-steel B--H curve (left) and effective relative
+    permeability $\mu_{r,\text{eff}}$ versus flux density (right).
+    The optimised design operates at $B_\text{core} = \SI{0.079}{T}$
+    ($\mu_r \approx 3\,979$), far from saturation.}
   \label{fig:saturation}
 \end{figure}
 
-\subsection{Why Stronger Magnets Yield Diminishing Returns}
+\subsection{Why the Return Path Limits Flux}
 
-Increasing the coercive field $H_c$ or magnet thickness $l_m$ raises the
-MMF $\mathcal{F}$. In the linear regime this proportionally increases
-$\phi$ and $B_\text{gap}$. Once $B_\text{core}$ exceeds the saturation
-knee, the additional MMF drives an increasingly reluctive core. The
-incremental gain in $B_\text{gap}$, torque constant $K_t$, and fan power
-becomes negligible: the improvement saturates together with the iron.
-
-\subsection{Why a Larger Core Diameter Has Limits}
-
-Increasing $D_\text{core}$ simultaneously (i)~reduces $g$, lowering
-$\mathcal{R}_\text{gap}$; (ii)~increases $A_c$, reducing $B_\text{core}$
-for a given flux (beneficial); and (iii)~increases $r_c$ in
-Eq.~\eqref{eq:Kt}, boosting $K_t$. The net effect is positive in the
-unsaturated regime. Once the core is already saturated, however,
-$\mathcal{R}_\text{core}$ dominates regardless of $A_c$, and no further
-diameter increase can recover the flux limited by the saturated iron.
+In the optimised design $\mathcal{R}_\text{return}$ accounts for
+97\,\% of the total reluctance.  This is a consequence of the square outer
+shell: the flux must travel through air (or a thin steel shell with a long
+mean path) back from the north pole to the south pole.  A real motor would
+replace this with a laminated iron yoke, reducing $\mathcal{R}_\text{return}$
+by a factor of $\mu_r \approx 4000$ and raising $B_\text{gap}$ by roughly
+$\sqrt{\mathcal{R}_\text{total,with\,yoke}/\mathcal{R}_\text{total,air}}$---
+a significant improvement.  The simulation is a teaching model; it correctly
+captures the circuit structure but not a yoke-equipped real motor.
 
 % ============================================================
 \section{Parameter Sensitivity Analysis}
 \label{sec:sensitivity}
 % ============================================================
 
-Figure~\ref{fig:sensitivity} shows the effect of individually varying each
-design parameter around the D2 baseline. Fan output power (left axis) and
-efficiency (right axis) are plotted against each parameter value; the grey
-dotted line marks the baseline.
+Each of the six free parameters was swept independently across its full
+valid range while the other five were held at the optimised baseline.
+Figure~\ref{fig:sensitivity} plots fan output power $P_\text{fan}$ and
+efficiency $\eta$ for each sweep.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\linewidth]{Figure/sensitivity_sweep.png}
-  \caption{Parameter sensitivity sweeps for the High-Power baseline (D2:
-    NdFeB N52, $L_\text{ax}=\SI{20}{mm}$, $D_\text{core}=\SI{10}{mm}$,
-    $N=30$, $d_w=\SI{0.20}{mm}$, $\delta=\SI{0.5}{mm}$, $V=\SI{3}{V}$).
-    Each panel varies one parameter; the dotted vertical line is the
+  \caption{Parameter sensitivity sweeps around the optimised baseline
+    (NdFeB N52, $L=\SI{150}{mm}$, $d_\text{core}=\SI{39}{mm}$,
+    $N=200$, $d_w=\SI{5}{mm}$, $\delta=\SI{0.05}{mm}$, $V=\SI{200}{V}$).
+    Blue: $P_\text{fan}$; pink dashed: $\eta$; orange vertical line:
     baseline value.}
   \label{fig:sensitivity}
 \end{figure}
 
-\subsection{Axial Depth $L_\text{ax}$}
+\subsection{Axial Depth $L$ (10--150\,mm)}
 
-Increasing $L_\text{ax}$ enlarges both the air-gap area $A_\text{gap}$
-and the active conductor length, raising $K_t \propto L_\text{ax}$
-(Eq.~\ref{eq:Kt}). Because the fan load is cubic in speed
-($P_\text{fan} = k_\text{fan}\omega^3$), even a modest axial extension
-yields a super-linear power gain. The trade-off is a proportionally longer
-coil (higher $R_\text{coil}$) and a heavier rotor.
+A shorter rotor has lower $K_t$ and smaller inertia $J$, so the
+no-load speed $\omega_0 = V/K_e \propto 1/L$ rises sharply.  Because
+$P_\text{fan} \propto \omega^3$, the peak fan output (\SI{232\,986}{W})
+occurs at $L \approx \SI{35.5}{mm}$, not at the maximum depth.
+However, the low back-EMF fraction at that speed means most input is
+wasted as $I^2R$, collapsing $\eta$ to 46.6\,\%.  Increasing $L$
+slows the motor, raises the back-EMF fraction, and lifts $\eta$
+monotonically toward 91.2\,\% at \SI{150}{mm}.
+The baseline sits at the efficiency-optimal end of the range.
 
-\subsection{Number of Turns $N$}
+\subsection{Core Diameter $d_\text{core}$ (5--39\,mm)}
+
+Smaller core diameter increases the air gap, causing the return-path
+reluctance to dominate even more and $B_\text{gap}$ to fall.  The
+very low inertia at small diameter allows the motor to spin at extreme
+speed, briefly boosting $P_\text{fan}$; at \SI{8.1}{mm} the fan output
+peaks at \SI{95\,805}{W} (but $\eta = 81.6\,\%$).  At \SI{5}{mm} the
+core flux collapses to zero.  Efficiency peaks at $\approx\SI{36}{mm}$
+(\SI{92.1}{\percent}), within 1\,pp of the \SI{39}{mm} baseline.
+
+\subsection{Coil Turns $N$}
 
 Both $K_t$ and $R_\text{coil}$ scale linearly with $N$:
 \begin{equation}
   K_t \propto N, \qquad R_\text{coil} \propto N.
 \end{equation}
-The no-load speed $\omega_0 = V/K_e$ is therefore independent of $N$ in
-the ideal model. In practice, reducing $N$ while thickening the wire to
-fill the same winding slot lowers $R_\text{coil}$ quadratically with wire
-diameter, reducing copper loss. The sensitivity sweep shows that halving
-$N$ from 30 to 15 more than doubles fan power ($+114\,\%$).
+Fewer turns raise $\omega_0 = V/K_e \propto 1/N$ dramatically; at
+$N=10$ the motor reaches speeds 20$\times$ the baseline and fan output
+peaks at \SI{1\,339\,379}{W}, but $\eta$ collapses to 17.7\,\%.
+The optimum lies at maximum turns ($N=200$) combined with thick wire
+($d_w=\SI{5}{mm}$) to keep $R_\text{coil}$ low.
 
 \subsection{Wire Diameter $d_w$}
 
-Since $R_\text{coil} \propto d_w^{-2}$, a 25\,\% increase in $d_w$
-reduces resistance by $\approx\!44\,\%$ and lowers $I^2 R$ loss at fixed
-current. This permits higher steady-state current and improves both power
-and efficiency. In practice, thicker wire reduces the number of turns that
-fit in a given slot volume, so $N$ and $d_w$ must be co-optimised.
+Since $R_\text{coil} \propto d_w^{-2}$, thin wire creates enormous
+resistance: at \SI{0.1}{mm} the motor barely spins ($P_\text{fan} =
+\SI{0.72}{W}$, $\eta = 0.34\,\%$).  Both $P_\text{fan}$ and $\eta$
+increase monotonically with $d_w$ — there is no trade-off.  The
+baseline at \SI{5.00}{mm} (the upper limit) is globally optimal for
+this parameter.
 
 \subsection{Lamination Thickness $\delta$}
 
-From Eq.~\eqref{eq:Peddy}:
-\begin{equation}
-  P_\text{eddy} \propto \delta^2.
-\end{equation}
-Halving $\delta$ reduces eddy-current loss by a factor of four. At the
-3\,V, 3600\,RPM operating point of D6, iron losses are small relative to
-copper loss, so the efficiency gain is modest in absolute terms. At higher
-speeds and voltages, where iron losses grow as $f_e^2$, thin laminations
-recover significant efficiency.
+The eddy-current loss $P_\text{eddy} \propto \delta^2 B_\text{core}^2$
+is theoretically sensitive to lamination thickness.  However, the
+combination of low flux density ($B_\text{core} = \SI{0.079}{T}$,
+dominated by the return-path reluctance) and modest core volume means
+that even at $\delta = \SI{2.0}{mm}$ the total iron losses remain
+below \SI{0.5}{W} — less than 0.002\,\% of the \SI{24\,670}{W} fan
+output.  The sensitivity sweep is completely flat: lamination
+thickness has zero practical effect in this geometry.
+Any value from \SIrange{0.05}{2.0}{mm} is equally acceptable.
 
 \subsection{Supply Voltage $V$}
 
-Voltage is the most powerful single lever. At fixed $R_\text{coil}$ and
-$K_e$, steady-state speed and current both scale approximately with $V$,
-so:
-\begin{equation}
-  P_\text{fan} = k_\text{fan}\,\omega^3 \propto V^3.
-\end{equation}
-A 25\,\% voltage increase raises fan power by $\approx\!73\,\%$ in the
-simulation, consistent with the cubic scaling. The constraint is motor
-thermal and insulation ratings.
+Voltage is the most powerful single lever.  Increasing $V$ raises the
+back-EMF fraction $K_e\omega/V$ toward unity (Eq.~\ref{eq:etass}),
+which directly raises $\eta_\text{ss}$.  The efficiency peak
+($\eta = 95.9\,\%$) occurs at \SI{38.8}{V}, where the fan load just
+balances the friction at low current, but the corresponding fan output
+is only \SI{211}{W}.  At $V=\SI{200}{V}$ the output reaches
+\SI{24\,670}{W} at $\eta = 91.2\,\%$ — a loss of only 4.7\,pp in
+exchange for a 117$\times$ increase in power.  The baseline uses the
+maximum available voltage.
 
-\subsection{Core Diameter $D_\text{core}$}
+\subsection{Sensitivity Summary}
 
-As discussed in Section~\ref{sec:saturation}, a larger core helps in the
-unsaturated regime by reducing $\mathcal{R}_\text{gap}$ and increasing
-$r_c$ in Eq.~\eqref{eq:Kt}. Beyond the saturation knee, the benefit
-saturates. The manufacturing constraint ($g \geq \SI{0.5}{mm}$) caps
-$D_\text{core} \leq \SI{11}{mm}$; in the unsaturated region, operating
-close to this bound is beneficial.
+\begin{table}[H]
+  \centering
+  \caption{Sensitivity summary: direction of each parameter for
+           maximum fan output power vs.\ maximum efficiency.}
+  \label{tab:sensitivity}
+  \small
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{@{} L{2.0cm} C{1.4cm} C{1.4cm} L{2.0cm} @{}}
+    \toprule
+    \textbf{Parameter} & \textbf{$\uparrow P_\text{fan}$} &
+    \textbf{$\uparrow\eta$} & \textbf{Baseline} \\
+    \midrule
+    Axial depth   & Decrease & Increase & 150\,mm (max $\eta$) \\
+    Core diam.    & Decrease & $\approx$36\,mm & 39\,mm (near opt.) \\
+    Turns $N$     & Decrease & Increase & 200 (max choice) \\
+    Wire diam.    & Increase & Increase & 5\,mm (no trade-off) \\
+    Lam.\ thick.  & ---      & ---      & Any; iron loss negligible \\
+    Voltage $V$   & Increase & $\approx$39\,V & 200\,V (max power) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The optimised design sits at or within 1\,pp of the efficiency-optimal
+point for every parameter.  The only meaningful trade-off is voltage:
+\SI{38.8}{V} would give 4.7\,pp higher $\eta$ but reduces fan output
+by 99.1\,\%.
 
 % ============================================================
-\section{Design Recommendations}
+\section{Design Recommendation}
 \label{sec:rec}
 % ============================================================
 
-\subsection{Recommendation A: Maximum Fan Output Power -- Design D2}
+The globally optimal design is summarised in Table~\ref{tab:rec}.
 
 \begin{table}[H]
   \centering
-  \caption{Design D2: parameters and steady-state results.}
-  \label{tab:recA}
+  \caption{Recommended (globally optimal) design and steady-state results.}
+  \label{tab:rec}
   \small
-  \begin{tabular}{@{} l l l @{}}
+  \setlength{\tabcolsep}{6pt}
+  \begin{tabular}{@{} L{2.2cm} L{1.8cm} L{3cm} @{}}
     \toprule
-    Parameter & Value & Rationale \\
+    \textbf{Parameter} & \textbf{Value} & \textbf{Rationale} \\
     \midrule
-    Magnet material  & NdFeB N52          & Highest $B_r$, maximum MMF \\
-    Axial depth      & \SI{20}{mm}        & Maximises $K_t$ and air-gap area \\
-    Core diameter    & \SI{10}{mm}        & $g = \SI{1.0}{mm}$; below saturation \\
-    Turns $N$        & 30                 & Lower $R_\text{coil}$; adequate $K_t$ \\
-    Wire diameter    & \SI{0.20}{mm}      & Reduces winding resistance \\
-    Lam.\ thickness  & \SI{0.50}{mm}      & Iron loss small at this speed \\
-    Voltage          & \SI{3.0}{V}        & Rated motor voltage \\
+    Magnet material  & NdFeB N52        & Highest $B_r$, max MMF \\
+    Axial depth      & \SI{150}{mm}     & Maximises $K_t$ and active area \\
+    Core diameter    & \SI{39}{mm}      & Largest permissible; $g = \SI{0.5}{mm}$ \\
+    Turns $N$        & 200              & High $K_e$; back-EMF ceiling \\
+    Wire diameter    & \SI{5.00}{mm}    & Minimises $R_\text{coil}$ \\
+    Lam.\ thickness  & \SI{0.050}{mm}   & Minimises eddy-current loss \\
+    Voltage          & \SI{200}{V}      & Raises back-EMF fraction \\
     \midrule
-    Steady-state speed        & 7\,000\,RPM         & \\
-    Steady-state current      & \SI{25.6}{A}        & High; requires short duty cycle \\
-    \textbf{Fan output power} & \textbf{\SI{7.88}{W}} & Highest of all designs \\
-    Efficiency                & 2.54\,\%            & \\
+    Speed            & \SI{46308}{rpm}  & \\
+    Current          & \SI{80.83}{A}    & \\
+    Back-EMF         & \SI{146.93}{V}   & 73.5\,\% of supply \\
+    Fan output power & \SI{11404}{W}    & \\
+    \textbf{Efficiency} & \textbf{92.26\,\%} & \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-NdFeB N52 provides the highest air-gap flux density
-($B_\text{gap} = \SI{0.335}{T}$). The extended axial depth raises
-$K_t = \SI{1.01}{mN\,m/A}$, while reducing turns to 30 lowers
-$R_\text{coil}$ to \SI{1.17}{\ohm}. The resulting high current produces
-the maximum fan power of \SI{7.88}{W}. The copper dissipation is large
-(\SI{1.53}{kW} nominal), so this design suits intermittent or
-actively cooled operation.
+The high efficiency is achieved because the back-EMF fraction is 73.5\,\%,
+leaving only 26.5\,\% of the supply voltage across the winding resistance.
+The remaining loss is split roughly equally between copper dissipation
+(\SI{484.7}{W}) and mechanical friction (\SI{471.8}{W}).
+Iron losses are negligible at the chosen lamination thickness.
 
-\subsection{Recommendation B: Maximum Efficiency -- Design D6}
-
-\begin{table}[H]
-  \centering
-  \caption{Design D6: parameters and steady-state results.}
-  \label{tab:recB}
-  \small
-  \begin{tabular}{@{} l l l @{}}
-    \toprule
-    Parameter & Value & Rationale \\
-    \midrule
-    Magnet material   & NdFeB N52          & High $B_\text{gap}$ for good $K_t$ \\
-    Axial depth       & \SI{12}{mm}        & Standard; limits inertia and copper \\
-    Core diameter     & \SI{10}{mm}        & $g = \SI{1.0}{mm}$ \\
-    Turns $N$         & 45                 & Higher $K_e$; better back-EMF fraction \\
-    Wire diameter     & \SI{0.15}{mm}      & Space-limited \\
-    Lam.\ thickness   & \SI{0.20}{mm}      & $P_\text{eddy}$ reduced by $6.25\times$ \\
-    Voltage           & \SI{3.0}{V}        & Rated voltage \\
-    \midrule
-    Steady-state speed         & 3\,588\,RPM        & \\
-    Steady-state current       & \SI{7.4}{A}        & Thermally conservative \\
-    Fan output power           & \SI{1.06}{W}       & \\
-    \textbf{Efficiency}        & \textbf{2.54\,\%}  & Best of all designs \\
-    Iron loss (eddy + hyst.)   & \SI{3.9}{mW}       & vs.\ \SI{21.1}{mW} at $\delta=\SI{0.5}{mm}$ \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-At this operating point efficiency is limited primarily by $I^2 R$ copper
-loss. Thin laminations ($\delta = \SI{0.2}{mm}$) reduce eddy-current loss
-by $6.25\times$ (Eq.~\ref{eq:Peddy}), recovering those watts as useful
-output. The lower current (\SI{7.4}{A} vs.\ \SI{25.6}{A} for D2) makes
-this the most thermally sustainable design for continuous operation.
-
-\subsection{Trade-off Summary}
-
-Maximum output power and maximum efficiency do not coincide. Higher power
-requires large $K_t$ and low $R_\text{coil}$, but the resulting high
-current creates disproportionate $I^2 R$ loss. Higher efficiency requires
-lower current---achieved via more turns---and reduced iron loss via thin
-laminations. Voltage is the most leveraged parameter
-($P_\text{fan} \propto V^3$), but core saturation sets a ceiling on the
-benefit of stronger magnets or larger core diameters and must be verified
-when scaling any NdFeB design.
+The primary limitation of the model is the absence of a dedicated iron
+return yoke: $\mathcal{R}_\text{return}$ dominates and suppresses
+$B_\text{gap}$ to \SI{0.031}{T}.  A real high-efficiency design would use
+a silicon-steel yoke to close the flux path, which would dramatically
+reduce the required MMF and motor volume for the same output.
 
 % ============================================================
 \section{Conclusion}
 \label{sec:conclusion}
 % ============================================================
 
-A time-domain simulation of a PM brushed DC motor with a fan load has been
-developed and applied to six candidate designs. The principal findings are:
+A time-domain simulation of a PM brushed DC motor driving a fan load has
+been developed and a 1\,400-point parameter sweep has identified the
+globally optimal design. The principal findings are:
 
 \begin{enumerate}[leftmargin=2em, itemsep=2pt]
-  \item \textbf{Steel saturation} sharply limits the benefit of stronger
-        magnets or larger core diameters once $B_\text{core}\gtrsim\SI{1.5}{T}$.
-        The effective permeability falls from ${\sim}5000$ to below 30,
-        making $\mathcal{R}_\text{core}$ the dominant reluctance.
+  \item \textbf{Optimal efficiency of 92.26\,\%} is achieved at
+        \SI{46308}{rpm} with NdFeB N52 magnets, $L = \SI{150}{mm}$,
+        $d_\text{core} = \SI{39}{mm}$, $N = 200$, $d_w = \SI{5}{mm}$,
+        $\delta = \SI{0.05}{mm}$, $V = \SI{200}{V}$.
 
-  \item \textbf{Maximum fan power} of \SI{7.88}{W} at \SI{7000}{RPM} is
-        achieved by Design D2 (NdFeB N52, $L_\text{ax}=\SI{20}{mm}$,
-        $N=30$, $d_w=\SI{0.20}{mm}$, $V=\SI{3.0}{V}$).
+  \item \textbf{Efficiency ceiling} is set by the back-EMF fraction
+        $K_e\omega/V = 73.5\,\%$. Remaining loss is split roughly equally
+        between copper (\SI{484.7}{W}) and mechanical friction
+        (\SI{471.8}{W}).
 
-  \item \textbf{Maximum efficiency} of 2.54\,\% is achieved by Design D6
-        (NdFeB N52, $\delta=\SI{0.2}{mm}$, $N=45$, $V=\SI{3.0}{V}$,
-        3\,588\,RPM, \SI{7.4}{A}).
+  \item \textbf{Iron losses are negligible} ($<\SI{0.2}{W}$) at
+        $\delta = \SI{0.05}{mm}$, confirming that thin laminations are
+        essential at high speed.
 
-  \item \textbf{Voltage} is the strongest single design lever:
-        $P_\text{fan}\propto V^3$ means a 25\,\% voltage increase raises
-        fan power by ${\approx}73\,\%$.
+  \item \textbf{Return-path reluctance} dominates the magnetic circuit
+        because the square outer shell has no iron yoke.  A real
+        high-efficiency motor would use a silicon-steel return path to
+        reduce total reluctance by ${\sim}1000\times$.
 
-  \item \textbf{Lamination thickness} reduces eddy-current loss as
-        $\delta^2$ and matters most at high speed; at 3\,V toy-motor
-        conditions, copper loss overwhelmingly dominates.
+  \item \textbf{Voltage} is the most powerful design lever: raising $V$
+        increases the back-EMF fraction directly, which is the primary
+        driver of efficiency in this motor topology.
 \end{enumerate}
 
 % ============================================================

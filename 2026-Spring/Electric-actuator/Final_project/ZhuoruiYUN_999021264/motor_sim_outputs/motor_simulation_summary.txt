@@ -1,0 +1,36 @@
+============================================================
+  Permanent-Magnet Brushed DC Motor  —  Simulation Summary
+============================================================
+
+  Material       : NdFeB N52
+  Axial depth    : 150.0 mm
+  Core diameter  : 39.0 mm
+  Air gap        : 0.50 mm
+  Turns          : 200
+  Wire diameter  : 5.00 mm
+  Lam thickness  : 0.05 mm
+  Drive voltage  : 200.0 V
+
+  B_gap          : 0.030 T
+  B_core         : 0.078 T
+  mu_steel_eff   : 3979  (vs linear 2000)
+
+  Kt = Ke        : 0.03030 N·m/A
+  R_coil         : 0.074 Ω
+  L_coil         : 50.000 mH
+
+------------------------------------------------------------
+  STEADY-STATE PERFORMANCE
+------------------------------------------------------------
+  Speed          : 59890 RPM
+  Current        : 135291.19 mA
+  Back-EMF       : 190.026 V
+  Fan output     : 24669824.919 mW
+  Copper loss    : 1354967.496 mW
+  Eddy loss      : 9.623 mW
+  Hysteresis loss: 189.123 mW
+  Mec loss       : 788570.731 mW
+  Input power    : 27058237.506 mW
+  Efficiency     : 91.18 %
+
+============================================================
