@@ -8,3 +8,6 @@ venv/
 *.log
 *.aux
 *.asv
+__pycache__/
+*.bak
+*.pyc
