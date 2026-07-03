@@ -10,8 +10,8 @@ At the time of this Preliminary Design Review, the Solift H-VTOL design is at Te
 \begin{itemize}[noitemsep]
     \item Phase~1 material selection matrix (Section~4.1), confirming suitability of CFRP/Nomex composites, aluminium alloys, and ETFE encapsulation for manufacturability and durability.
     \item Phase~2 full parametric SolidWorks model with confirmed geometric envelope compliance, ensuring payload bay dimensions, wing span constraints, and CG envelope are satisfied.
-    \item Phase~3 FEA confirming $\text{SF} = 2.69$ at the critical tilt-arm root (Table~\ref{tab:fea}), demonstrating adequate structural safety margin under combined bending and torsion loads.
-    \item Phase~3 CFD confirming a full-vehicle cruise $L/D = 4.8$ (Table~\ref{tab:cfd}), consistent with the Chapter~\ref{ch:simulation} ANSYS Fluent result and used as the basis for the range and energy estimates under the selected MH114 airfoil.
+    \item Phase~3 FEA (Figure~\ref{fig:fea_stress}) confirming a peak wing-root von Mises stress of only \SI{0.325}{MPa} and a \SI{0.207}{mm} tip deflection, i.e.\ a very large structural margin and high stiffness under cruise loads.
+    \item Phase~3 CFD confirming a full-vehicle cruise $L/D = 4.8$ (Figure~\ref{fig:cfd_cruise}), consistent with the Chapter~\ref{ch:simulation} ANSYS Fluent result and used as the basis for the range and energy estimates under the selected MH114 airfoil.
     \item Phase~4 tolerance stack-up confirming $\delta_{total} = 0.60^\circ < 1.0^\circ$ requirement, ensuring tilt mechanism precision and vibration control during transition.
     \item Phase~5 manufacturing process plan with $\sim$39~h estimated production time per prototype unit, including CNC machining, composite layup, and subsystem assembly.
 \end{itemize}

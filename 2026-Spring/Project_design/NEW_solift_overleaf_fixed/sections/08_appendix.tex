@@ -50,26 +50,26 @@ where $A_{disk} = \pi \left(\frac{D_{prop}}{2}\right)^2 = \pi \times (0.279)^2 =
 \noindent Cruise power required (total, at 18~m/s, 5~kg payload):
 \begin{equation}
 \begin{aligned}
-    P_{cruise} &= \frac{D \cdot V}{1000} = \frac{(m \cdot g / (L/D)) \cdot V}{1000} \\
-               &= \frac{(12.0 \times 9.81 / 45.6) \times 18}{1000} = \SI{46.6}{W} \text{ (aerodynamic only)}
+    P_{cruise} &= D \cdot V = (m \cdot g / (L/D)) \cdot V \\
+               &= (12.0 \times 9.81 / 4.8) \times 18 = \SI{441}{W} \text{ (aerodynamic only)}
 \end{aligned}
 \end{equation}
 
 \noindent Adding propulsion efficiency losses ($\eta = 0.75$) and avionics ($\sim$30~W):
 \begin{equation}
-    P_{total} = \frac{46.6}{0.75} + 30 = \SI{92.1}{W}
+    P_{total} = \frac{441}{0.75} + 30 = \SI{618}{W}
 \end{equation}
 
 \noindent Net battery drain rate with solar:
 \begin{equation}
-    \dot{E}_{net} = P_{total} - P_{solar} = 92.1 - 232.8 \rightarrow \text{Net charge: solar exceeds cruise demand}
+    \dot{E}_{net} = P_{total} - P_{solar} = 618 - 232.8 = \SI{385.2}{W}\ \text{(net battery draw)}
 \end{equation}
 
-\noindent This confirms that under STC illumination, the solar array alone can sustain cruise flight. The battery serves as a buffer for VTOL phases and cloudy-day operation.
+\noindent Under STC illumination the solar array offsets about 38\% of the cruise power demand, so the battery supplies the remaining $\sim$\SI{385}{W} during cruise. Solar therefore extends endurance rather than fully sustaining cruise flight, and the battery also covers the high-power VTOL phases and cloudy-day operation.
 
 \noindent Estimated range (battery only, 5~kg payload):
 \begin{equation}
-    R_{batt} = \frac{E_{battery}}{P_{total}} \times V_\infty = \frac{977 \times 3600}{92.1} \times 18 \approx \SI{68}{km}
+    R_{batt} = \frac{E_{battery}}{P_{total}} \times V_\infty = \frac{977}{618} \times 18 \times 3.6 \approx \SI{102}{km}
 \end{equation}
 
 %---------------------------------------------------------------
