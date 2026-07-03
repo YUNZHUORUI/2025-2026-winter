@@ -13,3 +13,5 @@ __pycache__/
 *.pyc
 *.zip
 *.MOV
+slprj/
+*.slxc
