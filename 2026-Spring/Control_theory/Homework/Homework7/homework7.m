@@ -46,7 +46,7 @@ grid on;
 %% part (c) find the lyapunov's function and plot time history
 Q = eye(3);
 %solve A'P + PA = -Q
-P = lyap(A', -Q) ;  % MATLAB内置：解 A'P + PA = -Q，注意符号
+P = lyap(A', Q) ;  % MATLAB内置：解 A'P + PA = -Q，注意符号
 disp(eig(P));
 
 f = @(t, x) [-(3*x(1) + x(3)) / (x(2) + 1);
